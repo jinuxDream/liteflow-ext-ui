@@ -1,0 +1,69 @@
+{
+  "name": "liteflow-editor-standalone",
+  "version": "1.0.0",
+  "description": "LiteFlow 可视化编辑器独立版",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --mode lib",
+    "build:demo": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts,tsx",
+    "lint:fix": "eslint src --ext ts,tsx --fix"
+  },
+  "keywords": [
+    "liteflow",
+    "editor",
+    "visualization",
+    "flow"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@ant-design/icons": "^4.0.6",
+    "@antv/layout": "^0.3.25",
+    "@antv/x6": "^2.18.1",
+    "@antv/x6-plugin-clipboard": "^2.1.6",
+    "@antv/x6-plugin-dnd": "^2.1.1",
+    "@antv/x6-plugin-export": "^2.1.6",
+    "@antv/x6-plugin-history": "^2.2.4",
+    "@antv/x6-plugin-keyboard": "^2.2.3",
+    "@antv/x6-plugin-minimap": "^2.0.7",
+    "@antv/x6-plugin-scroller": "^2.0.10",
+    "@antv/x6-plugin-selection": "^2.2.2",
+    "@antv/x6-plugin-snapline": "^2.1.7",
+    "@antv/x6-plugin-transform": "^2.1.8",
+    "@antv/x6-react-components": "^2.0.9",
+    "@antv/x6-react-shape": "^2.2.3",
+    "antd": "^4.5.3",
+    "classnames": "^2.3.2",
+    "lodash": "^4.17.21",
+    "react-json-view": "^1.19.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.23.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "less": "^4.2.0",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "vite-plugin-dts": "^3.7.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
