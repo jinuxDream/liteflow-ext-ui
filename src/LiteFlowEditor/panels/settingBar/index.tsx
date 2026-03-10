@@ -21,12 +21,13 @@ const SettingBar: React.FC<IProps> = (props) => {
   const { flowGraph } = props;
 
   const [selectedModel, setSelectedModel] = useState<ELNode | null>(null);
+  const [updateKey, setUpdateKey] = useState(0);
 
   const forceUpdate = useReducer((n) => n + 1, 0)[1];
 
   useEffect(() => {
     forceUpdate();
-  }, [selectedModel]);
+  }, [selectedModel, updateKey]);
 
   useEffect(() => {
     const handler = () => {
@@ -34,6 +35,7 @@ const SettingBar: React.FC<IProps> = (props) => {
     };
     const handleSelect = (component: ELNode | null) => {
       setSelectedModel(component);
+      setUpdateKey(prev => prev + 1);
     };
     flowGraph.on('settingBar:forceUpdate', handler);
     flowGraph.on('model:select', handleSelect);

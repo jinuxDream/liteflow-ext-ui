@@ -48,6 +48,7 @@ const registerEvents = (flowGraph: Graph, showEdgeAddButton: boolean = true): vo
   });
   flowGraph.on('blank:mousedown', () => {
     flowGraph.cleanSelection();
+    flowGraph.trigger('model:select', null);
   });
   flowGraph.on('edge:unselected', (args) => {
     args.edge.attr('line/stroke', '#c1c1c1', { ignore: true });
