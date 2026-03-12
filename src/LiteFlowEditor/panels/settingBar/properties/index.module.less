@@ -1,19 +1,227 @@
 .liteflowEditorPropertiesEditorContainer {
-  height: 900px;
+  height: 100%;
   overflow-y: auto;
-  padding: 10px;
+  overflow-x: hidden;
+  padding: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   :global {
     .ant-form-item {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
-    .ant-input-number {
-      width: 100%;
+    .ant-form-item-label > label {
+      font-size: 12px;
+      height: 20px;
     }
   }
-  .liteflowEditorPropertiesInformation {
-    padding: 0 12px;
+  .idFormItem {
+    margin-bottom: 4px !important;
   }
-  .liteflowEditorPropertiesDataPropertyInformation {
-    padding-left: 8px;
+  .divider {
+    margin: 6px 0;
+    flex-shrink: 0;
+  }
+  .metadataSection {
+    margin-top: 4px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .metadataContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .basicInfo {
+    padding: 6px 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+  .infoRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .infoLabel {
+    font-size: 12px;
+    color: #595959;
+    white-space: nowrap;
+  }
+  .infoTag {
+    font-size: 11px;
+    padding: 0 4px;
+    height: 18px;
+    line-height: 16px;
+    margin: 0;
+  }
+  .infoDesc {
+    font-size: 12px;
+    color: #262626;
+    line-height: 1.4;
+  }
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 0;
+  }
+  .sectionIcon {
+    font-size: 12px;
+    color: #1890ff;
+  }
+  .sectionTitle {
+    font-size: 12px;
+    font-weight: 600;
+    color: #262626;
+  }
+  .sectionCount {
+    font-size: 11px;
+    color: #8c8c8c;
+    margin-left: 2px;
+  }
+  .paramTable {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .paramRow {
+    display: grid;
+    grid-template-columns: 1fr auto auto 2fr;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 6px;
+    background: #fafafa;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  .paramName {
+    font-weight: 600;
+    color: #262626;
+    font-size: 11px;
+  }
+  .paramType {
+    display: flex;
+    align-items: center;
+  }
+  .typeTag {
+    font-size: 10px;
+    padding: 0 4px;
+    height: 16px;
+    line-height: 14px;
+    margin: 0;
+  }
+  .paramRequired {
+    display: flex;
+    align-items: center;
+  }
+  .reqTag {
+    font-size: 10px;
+    padding: 0 4px;
+    height: 16px;
+    line-height: 14px;
+    margin: 0;
+  }
+  .paramDesc {
+    color: #595959;
+    font-size: 11px;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .accessRuleBox {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 6px 8px;
+    background: #e6f7ff;
+    border: 1px solid #91d5ff;
+    border-radius: 3px;
+  }
+  .accessRuleIcon {
+    font-size: 12px;
+    color: #1890ff;
+    font-weight: bold;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .accessRuleText {
+    font-size: 11px;
+    color: #262626;
+    line-height: 1.4;
+  }
+  .stepsCompact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stepCompactItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 2px 0;
+  }
+  .stepNum {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1890ff;
+    min-width: 16px;
+    flex-shrink: 0;
+  }
+  .stepText {
+    font-size: 11px;
+    color: #595959;
+    line-height: 1.4;
+  }
+  .depsList {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .depItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    background: #fafafa;
+    border-radius: 3px;
+    min-height: 24px;
+  }
+  .depType {
+    font-size: 10px;
+    padding: 0 4px;
+    height: 16px;
+    line-height: 14px;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .depName {
+    font-weight: 600;
+    font-size: 11px;
+    color: #262626;
+    flex-shrink: 0;
+    margin-right: 4px;
+  }
+  .depDesc {
+    font-size: 11px;
+    color: #595959;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
   }
 }

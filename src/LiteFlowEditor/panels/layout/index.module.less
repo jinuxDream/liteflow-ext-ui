@@ -6,6 +6,7 @@
 
   .liteflowEditorToolBar {
     height: 43px;
+    flex-shrink: 0;
   }
 
   .liteflowEditorSideBar {
@@ -16,6 +17,9 @@
   .liteflowEditorSettingBar {
     height: 100%;
     border-left: 1px solid #d9d9d9;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   :global {
     .x6-split-box-item-second {

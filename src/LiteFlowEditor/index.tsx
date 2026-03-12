@@ -12,6 +12,7 @@ import createFlowGraph from './panels/flowGraph/createFlowGraph';
 import FlowGraphContextMenu from './panels/flowGraph/contextMenu';
 import FlowGraphContextPad from './panels/flowGraph/contextPad';
 import GraphContext from './context/GraphContext';
+import { ShowParamsProvider } from './context/ShowParamsContext';
 import Layout from './panels/layout';
 import SideBar from './panels/sideBar';
 import ToolBar from './panels/toolBar';
@@ -192,31 +193,33 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
 
   return (
     // @ts-ignore
-    <GraphContext.Provider // @ts-ignore
-      value={{ graph: flowGraph, graphWrapper: wrapperRef, model: null, currentEditor, enableEdit }}
-    >
-      <Layout
-        flowGraph={flowGraph}
-        SideBar={showSideBar && enableEdit ? SideBar : null}
-        ToolBar={enableEdit ? ToolBar : null}
-        SettingBar={SettingBar}
-        widgets={widgets}
+    <ShowParamsProvider>
+      <GraphContext.Provider // @ts-ignore
+        value={{ graph: flowGraph, graphWrapper: wrapperRef, model: null, currentEditor, enableEdit }}
       >
-        <div className={classNames(styles.liteflowEditorContainer, className)} ref={wrapperRef}>
-          <div className={styles.liteflowEditorGraph} ref={graphRef} />
-          <div className={styles.liteflowEditorMiniMap} ref={miniMapRef} />
-          {flowGraph && <Breadcrumb flowGraph={flowGraph} />}
-          {/* {flowGraph && <NodeEditorModal flowGraph={flowGraph} />} */}
-          {flowGraph && (
-            <FlowGraphContextMenu {...contextMenuInfo} flowGraph={flowGraph} enableEdit={enableEdit} />
-          )}
-          {flowGraph && (
-            <FlowGraphContextPad {...contextPadInfo} flowGraph={flowGraph} enableEdit={enableEdit} />
-          )}
-          {children}
-        </div>
-      </Layout>
-    </GraphContext.Provider>
+        <Layout
+          flowGraph={flowGraph}
+          SideBar={showSideBar && enableEdit ? SideBar : null}
+          ToolBar={enableEdit ? ToolBar : null}
+          SettingBar={SettingBar}
+          widgets={widgets}
+        >
+          <div className={classNames(styles.liteflowEditorContainer, className)} ref={wrapperRef}>
+            <div className={styles.liteflowEditorGraph} ref={graphRef} />
+            <div className={styles.liteflowEditorMiniMap} ref={miniMapRef} />
+            {flowGraph && <Breadcrumb flowGraph={flowGraph} />}
+            {/* {flowGraph && <NodeEditorModal flowGraph={flowGraph} />} */}
+            {flowGraph && (
+              <FlowGraphContextMenu {...contextMenuInfo} flowGraph={flowGraph} enableEdit={enableEdit} />
+            )}
+            {flowGraph && (
+              <FlowGraphContextPad {...contextPadInfo} flowGraph={flowGraph} enableEdit={enableEdit} />
+            )}
+            {children}
+          </div>
+        </Layout>
+      </GraphContext.Provider>
+    </ShowParamsProvider>
   );
 });
 

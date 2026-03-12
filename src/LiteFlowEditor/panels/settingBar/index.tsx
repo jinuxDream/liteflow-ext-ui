@@ -22,6 +22,7 @@ const SettingBar: React.FC<IProps> = (props) => {
 
   const [selectedModel, setSelectedModel] = useState<ELNode | null>(null);
   const [updateKey, setUpdateKey] = useState(0);
+  const [activeKey, setActiveKey] = useState('properties');
 
   const forceUpdate = useReducer((n) => n + 1, 0)[1];
 
@@ -36,6 +37,7 @@ const SettingBar: React.FC<IProps> = (props) => {
     const handleSelect = (component: ELNode | null) => {
       setSelectedModel(component);
       setUpdateKey(prev => prev + 1);
+      setActiveKey('properties');
     };
     flowGraph.on('settingBar:forceUpdate', handler);
     flowGraph.on('model:select', handleSelect);
@@ -64,7 +66,7 @@ const SettingBar: React.FC<IProps> = (props) => {
 
   return (
     <div className={styles.liteflowEditorSettingBarContainer}>
-      <Tabs defaultActiveKey={'properties'}>
+      <Tabs activeKey={activeKey} onChange={setActiveKey}>
         <TabPane tab={'属性'} key={'properties'}>
           {propertiesPanel}
         </TabPane>

@@ -42,6 +42,8 @@ export default abstract class ELNode {
   public id?: string;
   // 编排节点的属性：可以设置id/tag等等
   public properties?: Properties;
+  // 节点的元数据信息
+  public metadata?: NodeMetadata;
   // 当前节点的X6 Cell内容
   public cells: Cell[] = [];
   // 当前节点的X6 Node内容
@@ -343,13 +345,14 @@ export default abstract class ELNode {
    * 转换为JSON格式
    */
   public toJSON(): Record<string, any> {
-    const {type, condition, children, properties, id} = this;
+    const {type, condition, children, properties, id, metadata} = this;
     return Object.assign(
       {type},
       condition ? {condition: condition.toJSON()} : {},
       children ? {children: children.filter(x => x).map((child) => child.toJSON())} : {},
       id ? {id} : {},
       properties ? {properties: this.getProperties()} : {},
+      metadata ? {metadata} : {},
     );
   }
 
@@ -400,6 +403,39 @@ export interface Properties {
   tag?: string;
 
   [key: string]: any;
+}
+
+export interface NodeMetadata {
+  nodeId?: string;
+  nodeName?: string;
+  description?: string;
+  inputParameters?: ParameterInfo[];
+  outputParameters?: ParameterInfo[];
+  accessRule?: AccessRule;
+  steps?: StepInfo[];
+  dependencies?: DependencyInfo[];
+}
+
+export interface ParameterInfo {
+  fieldName: string;
+  fieldType: string;
+  description: string;
+  required: boolean;
+}
+
+export interface AccessRule {
+  description: string;
+}
+
+export interface StepInfo {
+  order: number;
+  description: string;
+}
+
+export interface DependencyInfo {
+  type: string;
+  name: string;
+  description: string;
 }
 
 export interface INodeData {
