@@ -29,9 +29,10 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
   } catch (error) {
   }
   
-  const nodeIdContent = nodeId ? (
-    <Tooltip title={nodeId} placement="bottom">
-      <div className={classNames(styles.componentType)}>{nodeId}</div>
+  const displayText = metadata?.nodeName || nodeId;
+  const nodeIdContent = displayText ? (
+    <Tooltip title={displayText} placement="bottom">
+      <div className={classNames(styles.componentType)}>{displayText}</div>
     </Tooltip>
   ) : null;
 
