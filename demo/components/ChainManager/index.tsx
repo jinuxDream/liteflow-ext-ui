@@ -9,6 +9,7 @@ const API_BASE_PATH = (window as any).LITEFLOW_CONFIG?.API_BASE_PATH || '/api';
 
 type Chain = {
   chainId: string;
+  chainName: string;
   elJson: any;
 }
 
@@ -117,8 +118,9 @@ const ChainManager: React.FC<IProps> = ({ showActions = true }) => {
       .then((data) => {
         if (data.code === 'S') {
           Modal.success({ title: '操作成功', content: data.message })
-          setChains([...chains, newChain]);
-          setCurrentChain(newChain);
+          const addedChain = { ...newChain, chainName: newChain.chainName || newChain.chainId };
+          setChains([...chains, addedChain]);
+          setCurrentChain(addedChain);
         } else {
           Modal.error({ title: '操作失败', content: data.message })
         }
@@ -133,13 +135,13 @@ const ChainManager: React.FC<IProps> = ({ showActions = true }) => {
         value={currentChain?.chainId}
         placeholder="请选择接口数据"
         style={{width: 300}}
-        options={chains.map(({chainId}: Chain) => ({
-          label: chainId,
+        options={chains.map(({chainId, chainName}: Chain) => ({
+          label: chainName,
           value: chainId,
         }))}
         onChange={handleOnChange}
         filterOption={(input, option) =>
-          option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          option?.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
       />
       {showActions && (

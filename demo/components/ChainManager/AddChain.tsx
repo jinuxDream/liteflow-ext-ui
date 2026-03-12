@@ -8,6 +8,7 @@ const API_BASE_PATH = (window as any).LITEFLOW_CONFIG?.API_BASE_PATH || '/api';
 
 type Chain = {
   chainId: string;
+  chainName: string;
   elJson: any;
 }
 
@@ -15,10 +16,7 @@ interface IProps {
   value?: Chain;
   onChange: (newChain?: Chain) => void;
   disabled?: boolean;
-  chains: Array<{
-    chainId: string;
-    elJson: any;
-  }>;
+  chains: Array<Chain>;
 }
 
 const AddChain: React.FC<IProps> = ({ value = {}, onChange, chains, disabled }) => {
@@ -34,12 +32,17 @@ const AddChain: React.FC<IProps> = ({ value = {}, onChange, chains, disabled }) 
     try {
       const { chainId, elTemplateId } = await form.validateFields();
       let elJson = {};
+      let chainName = chainId;
       if (elTemplateId) {
         elJson = await fetch(`${API_BASE_PATH}/getChainById?chainId=${elTemplateId}`, { method: 'GET' })
           .then((res) => res.json())
           .then((data) => data?.elJson ? data.elJson : {});
+        const templateChain = chains.find(c => c.chainId === elTemplateId);
+        if (templateChain?.chainName) {
+          chainName = templateChain.chainName;
+        }
       }
-      onChange({ chainId, elJson });
+      onChange({ chainId, chainName, elJson });
       setIsModalOpen(false);
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
@@ -52,7 +55,8 @@ const AddChain: React.FC<IProps> = ({ value = {}, onChange, chains, disabled }) 
 
   const handleEmptyCanvas = () => {
     setIsModalOpen(false);
-    onChange(undefined);
+    const { chainId } = form.getFieldsValue();
+    onChange({ chainId, chainName: chainId, elJson: {} });
   }
 
   return (
@@ -88,8 +92,8 @@ const AddChain: React.FC<IProps> = ({ value = {}, onChange, chains, disabled }) 
               <Select
                 placeholder="请选择Chain模板"
                 style={{width: '100%'}}
-                options={chains.map(({chainId}: Chain) => ({
-                  label: chainId,
+                options={chains.map(({chainId, chainName}: Chain) => ({
+                  label: chainName,
                   value: chainId,
                 }))}
               />
