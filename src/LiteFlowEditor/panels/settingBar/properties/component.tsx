@@ -197,8 +197,6 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
         </Form.Item>
       </Form>
       
-      <Divider className={styles.divider} />
-      
       <div className={styles.metadataSection}>
         {renderMetadata()}
       </div>

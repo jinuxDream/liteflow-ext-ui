@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Graph } from '@antv/x6';
 import { SplitBox } from '@antv/x6-react-components';
+import { FullscreenOutlined, FullscreenExitOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { useGraphWrapper } from '../../hooks';
 import '@antv/x6-react-components/es/split-box/style/index.css';
 import styles from './index.module.less';
@@ -23,6 +24,9 @@ const Layout: React.FC<IProps> = (props) => {
   const { flowGraph, SideBar, ToolBar, SettingBar, widgets } = props;
 
   const wrapperRef = useGraphWrapper();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [panelWidth, setPanelWidth] = useState(0);
+  const [isPanelVisible, setIsPanelVisible] = useState(true);
 
   const handleResize = () => {
     if (flowGraph && wrapperRef && wrapperRef.current) {
@@ -31,6 +35,28 @@ const Layout: React.FC<IProps> = (props) => {
       flowGraph.resize(width, height);
     }
   };
+
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+  
+  const togglePanel = () => {
+    setIsPanelVisible(!isPanelVisible);
+  };
+
+  React.useEffect(() => {
+    const calculatePanelWidth = () => {
+      const screenWidth = window.innerWidth;
+      setPanelWidth(Math.floor(screenWidth * 0.25));
+    };
+    
+    calculatePanelWidth();
+    window.addEventListener('resize', calculatePanelWidth);
+    
+    return () => {
+      window.removeEventListener('resize', calculatePanelWidth);
+    };
+  }, []);
 
   let sideBar, toolBar, settingBar;
   if (flowGraph) {
@@ -41,26 +67,51 @@ const Layout: React.FC<IProps> = (props) => {
 
   if (!SideBar) {
     return (
-      <div className={styles.liteflowEditorLayoutContainer}>
-        <div className={styles.liteflowEditorToolBar}>{toolBar}</div>
-        <SplitBox
-          split={'vertical'}
-          minSize={50}
-          maxSize={500}
-          defaultSize={260}
-          primary="second"
-          onResizing={handleResize}
-        >
-          {props.children}
-          <div className={styles.liteflowEditorSettingBar}>{settingBar}</div>
-        </SplitBox>
-      </div>
-    );
+        <div className={styles.liteflowEditorLayoutContainer}>
+          <div className={styles.liteflowEditorToolBar}>
+            {toolBar}
+            <div className={styles.panelControlsInToolbar}>
+              <div className={styles.panelControlInToolbar} onClick={togglePanel} title={isPanelVisible ? "隐藏面板" : "显示面板"}>
+                {isPanelVisible ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
+              </div>
+            </div>
+          </div>
+          <SplitBox
+            split={'vertical'}
+            minSize={50}
+            maxSize={isFullscreen ? 10000 : Math.floor(window.innerWidth * 0.7)}
+            defaultSize={isFullscreen ? 10000 : (isPanelVisible ? panelWidth : 30)}
+            primary="second"
+            onResizing={handleResize}
+          >
+            {props.children}
+            {isPanelVisible ? (
+              <div className={`${styles.liteflowEditorSettingBar} ${isFullscreen ? styles.fullscreen : ''}`}>
+                <div className={styles.fullscreenToggle} onClick={toggleFullscreen} title={isFullscreen ? "退出全屏" : "全屏"}>
+                  {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+                </div>
+                {settingBar}
+              </div>
+            ) : (
+              <div className={styles.panelShowButton} onClick={togglePanel} title="显示面板">
+                <MenuUnfoldOutlined />
+              </div>
+            )}
+          </SplitBox>
+        </div>
+      );
   }
 
   return (
     <div className={styles.liteflowEditorLayoutContainer}>
-      <div className={styles.liteflowEditorToolBar}>{toolBar}</div>
+      <div className={styles.liteflowEditorToolBar}>
+        {toolBar}
+        <div className={styles.panelControlsInToolbar}>
+          <div className={styles.panelControlInToolbar} onClick={togglePanel} title={isPanelVisible ? "隐藏面板" : "显示面板"}>
+            {isPanelVisible ? <MenuFoldOutlined /> : <MenuUnfoldOutlined />}
+          </div>
+        </div>
+      </div>
       <SplitBox
         split={'vertical'}
         minSize={50}
@@ -73,13 +124,24 @@ const Layout: React.FC<IProps> = (props) => {
         <SplitBox
           split={'vertical'}
           minSize={50}
-          maxSize={500}
-          defaultSize={260}
+          maxSize={isFullscreen ? 10000 : Math.floor(window.innerWidth * 0.7)}
+          defaultSize={isFullscreen ? 10000 : (isPanelVisible ? panelWidth : 30)}
           primary="second"
           onResizing={handleResize}
         >
           {props.children}
-          <div className={styles.liteflowEditorSettingBar}>{settingBar}</div>
+          {isPanelVisible ? (
+            <div className={`${styles.liteflowEditorSettingBar} ${isFullscreen ? styles.fullscreen : ''}`}>
+              <div className={styles.fullscreenToggle} onClick={toggleFullscreen} title={isFullscreen ? "退出全屏" : "全屏"}>
+                {isFullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
+              </div>
+              {settingBar}
+            </div>
+          ) : (
+            <div className={styles.panelShowButton} onClick={togglePanel} title="显示面板">
+              <RightOutlined />
+            </div>
+          )}
         </SplitBox>
       </SplitBox>
     </div>

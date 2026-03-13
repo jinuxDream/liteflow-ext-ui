@@ -7,6 +7,38 @@
   .liteflowEditorToolBar {
     height: 43px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panelControlInToolbar {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    background: #f0f0f0;
+    border: 1px solid #d9d9d9;
+    transition: all 0.3s;
+    
+    &:hover {
+      background: #e6e6e6;
+      border-color: #bfbfbf;
+    }
+    
+    .anticon {
+      font-size: 14px;
+      color: #595959;
+    }
+  }
+
+  .panelControlsInToolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
   }
 
   .liteflowEditorSideBar {
@@ -20,6 +52,238 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    position: relative;
+  }
+
+  .fullscreen {
+    position: fixed;
+    top: 43px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    border-left: none;
+    background: #fff;
+    padding: 0 30px 30px 30px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    
+    .liteflowEditorPropertiesEditorContainer {
+      height: auto;
+      overflow: visible;
+      padding: 0;
+      font-size: 16px;
+      
+      .metadataContainer {
+        gap: 14px;
+      }
+      
+      .basicInfo {
+        padding: 10px 14px;
+        font-size: 15px;
+      }
+      
+      .infoLabel {
+        font-size: 15px;
+      }
+      
+      .infoTag {
+        font-size: 14px;
+        padding: 0 5px;
+        height: 20px;
+        line-height: 18px;
+      }
+      
+      .infoNameTag {
+        font-size: 15px;
+        padding: 0 6px;
+        height: 22px;
+        line-height: 20px;
+      }
+      
+      .infoDesc {
+        font-size: 15px;
+      }
+      
+      .section {
+        padding: 10px 14px;
+        gap: 6px;
+      }
+      
+      .sectionHeader {
+        padding: 10px 14px;
+        margin-bottom: 8px;
+      }
+      
+      .sectionIcon {
+        font-size: 17px;
+      }
+      
+      .sectionTitle {
+        font-size: 15px;
+      }
+      
+      .sectionCount {
+        font-size: 14px;
+      }
+      
+      .paramGroup {
+        margin-bottom: 8px;
+        padding: 6px;
+      }
+      
+      .paramGroupHeader {
+        font-size: 14px;
+        padding: 6px 10px;
+        margin-bottom: 6px;
+      }
+      
+      .paramRow {
+        padding: 6px 10px;
+        gap: 6px;
+        font-size: 14px;
+      }
+      
+      .directionTag {
+        font-size: 12px;
+        padding: 0 4px;
+        height: 16px;
+        line-height: 14px;
+      }
+      
+      .paramName {
+        font-size: 14px;
+      }
+      
+      .typeTag {
+        font-size: 13px;
+        padding: 0 5px;
+        height: 18px;
+        line-height: 16px;
+      }
+      
+      .reqTag {
+        font-size: 13px;
+        padding: 0 5px;
+        height: 18px;
+        line-height: 16px;
+      }
+      
+      .paramDesc {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      
+      .accessRuleBox {
+        padding: 10px 14px;
+      }
+      
+      .accessRuleIcon {
+        font-size: 15px;
+      }
+      
+      .accessRuleText {
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      
+      .stepCompactItem {
+        padding: 6px 10px;
+        gap: 8px;
+      }
+      
+      .stepNum {
+        font-size: 14px;
+        min-width: 20px;
+      }
+      
+      .stepText {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      
+      .depItem {
+        padding: 6px 10px;
+        gap: 8px;
+        min-height: 28px;
+      }
+      
+      .depType {
+        font-size: 13px;
+        padding: 0 5px;
+        height: 18px;
+        line-height: 16px;
+      }
+      
+      .depName {
+        font-size: 14px;
+      }
+      
+      .depDesc {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+    
+    > * {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+  }
+
+  .fullscreenToggle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    background: #f0f0f0;
+    border: 1px solid #d9d9d9;
+    transition: all 0.3s;
+    z-index: 10;
+    
+    &:hover {
+      background: #e6e6e6;
+      border-color: #bfbfbf;
+    }
+    
+    .anticon {
+      font-size: 14px;
+      color: #595959;
+    }
+  }
+
+  .panelShowButton {
+    width: 28px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px 0 0 4px;
+    background: #f0f0f0;
+    border: 1px solid #d9d9d9;
+    border-right: none;
+    transition: all 0.3s;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    &:hover {
+      background: #e6e6e6;
+      border-color: #bfbfbf;
+    }
+    
+    .anticon {
+      font-size: 14px;
+      color: #595959;
+    }
   }
   :global {
     .x6-split-box-item-second {
