@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {Form, Input, Descriptions, Tag, Empty, Divider} from 'antd';
-import {ArrowRightOutlined, ArrowLeftOutlined, CheckCircleOutlined, ApiOutlined, WarningOutlined} from '@ant-design/icons';
+import {SettingOutlined, SafetyOutlined, OrderedListOutlined, ClusterOutlined} from '@ant-design/icons';
 import {debounce} from 'lodash';
 import {history} from '../../../hooks/useHistory';
 import ELNode, {NodeMetadata} from '../../../model/node';
@@ -55,10 +55,10 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
         {metadata.nodeName && (
           <div className={styles.basicInfo}>
             <div className={styles.infoRow}>
+              <span className={styles.infoLabel}>名称:</span>
+              <Tag color="green" className={styles.infoNameTag}>{metadata.nodeName}</Tag>
               <span className={styles.infoLabel}>ID:</span>
               <Tag color="blue" className={styles.infoTag}>{metadata.nodeId}</Tag>
-              <span className={styles.infoLabel}>名称:</span>
-              <Tag color="green" className={styles.infoTag}>{metadata.nodeName}</Tag>
             </div>
             {metadata.description && (
               <div className={styles.infoRow}>
@@ -69,62 +69,72 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
           </div>
         )}
 
-        {metadata.inputParameters && metadata.inputParameters.length > 0 && (
+        {(metadata.inputParameters && metadata.inputParameters.length > 0 || metadata.outputParameters && metadata.outputParameters.length > 0) && (
           <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <ArrowLeftOutlined className={styles.sectionIcon} />
-              <span className={styles.sectionTitle}>输入参数</span>
-              <span className={styles.sectionCount}>({metadata.inputParameters.length})</span>
+            <div className={`${styles.sectionHeader} ${styles.sectionHeaderParams}`}>
+              <SettingOutlined className={styles.sectionIcon} />
+              <span className={styles.sectionTitle}>参数</span>
+              <span className={styles.sectionCount}>
+                ({(metadata.inputParameters?.length || 0) + (metadata.outputParameters?.length || 0)})
+              </span>
             </div>
-            <div className={styles.paramTable}>
-              {metadata.inputParameters.map((param, index) => (
-                <div key={index} className={styles.paramRow}>
-                  <div className={styles.paramName}>{param.fieldName}</div>
-                  <div className={styles.paramType}>
-                    <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
-                  </div>
-                  <div className={styles.paramRequired}>
-                    <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
-                      {param.required ? '必填' : '可选'}
-                    </Tag>
-                  </div>
-                  <div className={styles.paramDesc}>{param.description}</div>
+            
+            {metadata.inputParameters && metadata.inputParameters.length > 0 && (
+              <div className={styles.paramGroup}>
+                <div className={styles.paramGroupHeader}>输入参数 ({metadata.inputParameters.length})</div>
+                <div className={styles.paramTable}>
+                  {metadata.inputParameters.map((param, index) => (
+                    <div key={`input-${index}`} className={styles.paramRow}>
+                      <div className={styles.paramDirection}>
+                        <Tag color="blue" className={styles.directionTag}>输入</Tag>
+                      </div>
+                      <div className={styles.paramName}>{param.fieldName}</div>
+                      <div className={styles.paramType}>
+                        <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
+                      </div>
+                      <div className={styles.paramRequired}>
+                        <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
+                          {param.required ? '必填' : '可选'}
+                        </Tag>
+                      </div>
+                      <div className={styles.paramDesc}>{param.description}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {metadata.outputParameters && metadata.outputParameters.length > 0 && (
-          <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <ArrowRightOutlined className={styles.sectionIcon} />
-              <span className={styles.sectionTitle}>输出参数</span>
-              <span className={styles.sectionCount}>({metadata.outputParameters.length})</span>
-            </div>
-            <div className={styles.paramTable}>
-              {metadata.outputParameters.map((param, index) => (
-                <div key={index} className={styles.paramRow}>
-                  <div className={styles.paramName}>{param.fieldName}</div>
-                  <div className={styles.paramType}>
-                    <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
-                  </div>
-                  <div className={styles.paramRequired}>
-                    <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
-                      {param.required ? '必填' : '可选'}
-                    </Tag>
-                  </div>
-                  <div className={styles.paramDesc}>{param.description}</div>
+              </div>
+            )}
+            
+            {metadata.outputParameters && metadata.outputParameters.length > 0 && (
+              <div className={styles.paramGroup}>
+                <div className={styles.paramGroupHeader}>输出参数 ({metadata.outputParameters.length})</div>
+                <div className={styles.paramTable}>
+                  {metadata.outputParameters.map((param, index) => (
+                    <div key={`output-${index}`} className={styles.paramRow}>
+                      <div className={styles.paramDirection}>
+                        <Tag color="green" className={styles.directionTag}>输出</Tag>
+                      </div>
+                      <div className={styles.paramName}>{param.fieldName}</div>
+                      <div className={styles.paramType}>
+                        <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
+                      </div>
+                      <div className={styles.paramRequired}>
+                        <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
+                          {param.required ? '必填' : '可选'}
+                        </Tag>
+                      </div>
+                      <div className={styles.paramDesc}>{param.description}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
         {metadata.accessRule && (
           <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <CheckCircleOutlined className={styles.sectionIcon} />
+            <div className={`${styles.sectionHeader} ${styles.sectionHeaderRule}`}>
+              <SafetyOutlined className={styles.sectionIcon} />
               <span className={styles.sectionTitle}>准入规则</span>
             </div>
             <div className={styles.accessRuleBox}>
@@ -136,8 +146,8 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
 
         {metadata.steps && metadata.steps.length > 0 && (
           <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <ApiOutlined className={styles.sectionIcon} />
+            <div className={`${styles.sectionHeader} ${styles.sectionHeaderSteps}`}>
+              <OrderedListOutlined className={styles.sectionIcon} />
               <span className={styles.sectionTitle}>执行步骤</span>
               <span className={styles.sectionCount}>({metadata.steps.length})</span>
             </div>
@@ -154,8 +164,8 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
 
         {metadata.dependencies && metadata.dependencies.length > 0 && (
           <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <WarningOutlined className={styles.sectionIcon} />
+            <div className={`${styles.sectionHeader} ${styles.sectionHeaderDeps}`}>
+              <ClusterOutlined className={styles.sectionIcon} />
               <span className={styles.sectionTitle}>依赖清单</span>
               <span className={styles.sectionCount}>({metadata.dependencies.length})</span>
             </div>
