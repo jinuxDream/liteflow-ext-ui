@@ -80,7 +80,7 @@ const Layout: React.FC<IProps> = (props) => {
             split={'vertical'}
             minSize={50}
             maxSize={isFullscreen ? 10000 : Math.floor(window.innerWidth * 0.7)}
-            defaultSize={isFullscreen ? 10000 : (isPanelVisible ? panelWidth : 30)}
+            defaultSize={isFullscreen ? (isPanelVisible ? 10000 : 0) : (isPanelVisible ? panelWidth : 0)}
             primary="second"
             onResizing={handleResize}
           >
@@ -93,9 +93,11 @@ const Layout: React.FC<IProps> = (props) => {
                 {settingBar}
               </div>
             ) : (
-              <div className={styles.panelShowButton} onClick={togglePanel} title="显示面板">
-                <MenuUnfoldOutlined />
-              </div>
+              isFullscreen && (
+                <div className={styles.panelShowButton} onClick={togglePanel} title="显示面板">
+                  <MenuUnfoldOutlined />
+                </div>
+              )
             )}
           </SplitBox>
         </div>
