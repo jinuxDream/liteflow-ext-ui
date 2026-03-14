@@ -4,8 +4,35 @@ export default {
   THEN: {
     type: ConditionTypeEnum.THEN,
     children: [
-      { type: NodeTypeEnum.COMMON, id: 'a', properties: { tag: 'dog' } },
-      { type: NodeTypeEnum.COMMON, id: 'b' },
+      { 
+        type: NodeTypeEnum.COMMON, 
+        id: 'a', 
+        properties: { tag: 'dog' },
+        metadata: {
+          nodeName: '数据验证',
+          inputParameters: [
+            { fieldName: 'userId', fieldType: 'String', required: true, description: '用户ID' },
+            { fieldName: 'token', fieldType: 'String', required: true, description: '访问令牌' }
+          ],
+          outputParameters: [
+            { fieldName: 'isValid', fieldType: 'Boolean', required: true, description: '是否有效' },
+            { fieldName: 'userInfo', fieldType: 'Object', required: false, description: '用户信息' }
+          ]
+        }
+      },
+      { 
+        type: NodeTypeEnum.COMMON, 
+        id: 'b',
+        metadata: {
+          nodeName: '数据处理',
+          inputParameters: [
+            { fieldName: 'data', fieldType: 'Object', required: true, description: '原始数据' }
+          ],
+          outputParameters: [
+            { fieldName: 'result', fieldType: 'Object', required: true, description: '处理结果' }
+          ]
+        }
+      },
       { type: NodeTypeEnum.COMMON, id: 'c' },
       { type: NodeTypeEnum.COMMON, id: 'd' },
     ],

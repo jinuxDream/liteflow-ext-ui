@@ -11,6 +11,7 @@ interface IProps {
 
 const NodeViewWrapper: React.FC<IProps> = (props) => {
   const { showParams } = useShowParams();
+  
   console.log('NodeViewWrapper render with showParams:', showParams);
   
   return (

@@ -30,7 +30,10 @@ import {default as Chain} from './chain';
 import {default as Virtual} from './virtual';
 
 // AntV X6自定义节点的视图：使用React组件
-import {NodeBadge, NodeToolBar, NodeView} from '../components';
+import {NodeBadge, NodeToolBar, NodeView, NodeViewWrapper} from '../components';
+import ParamNode from '../components/ParamNode';
+import StepsNode from '../components/StepsNode';
+import DependenciesNode from '../components/DependenciesNode';
 
 /** 注册自定义节点到AntV X6 */
 [
@@ -59,10 +62,10 @@ import {NodeBadge, NodeToolBar, NodeView} from '../components';
     inherit: 'react-shape',
     component(node: Node) {
       return (
-        <NodeView node={node} icon={icon}>
+        <NodeViewWrapper node={node} icon={icon}>
           <NodeBadge node={node}/>
           <NodeToolBar node={node}/>
-        </NodeView>
+        </NodeViewWrapper>
       );
     },
     width: NODE_WIDTH,
@@ -87,6 +90,73 @@ import {NodeBadge, NodeToolBar, NodeView} from '../components';
     },
     ...node,
   });
+});
+
+register({
+  shape: 'param-node',
+  inherit: 'react-shape',
+  component(props: any) {
+    const data = props.node.getData();
+    return (
+      <ParamNode
+        nodeName={data?.nodeName || ''}
+        inputParameters={data?.inputParameters || []}
+        outputParameters={data?.outputParameters || []}
+      />
+    );
+  },
+  width: 400,
+  height: 300,
+  attrs: {
+    body: {
+      refWidth: '100%',
+      refHeight: '100%',
+    }
+  }
+});
+
+register({
+  shape: 'steps-node',
+  inherit: 'react-shape',
+  component(props: any) {
+    const data = props.node.getData();
+    return (
+      <StepsNode
+        nodeName={data?.nodeName || ''}
+        steps={data?.steps || []}
+      />
+    );
+  },
+  width: 400,
+  height: 300,
+  attrs: {
+    body: {
+      refWidth: '100%',
+      refHeight: '100%',
+    }
+  }
+});
+
+register({
+  shape: 'dependencies-node',
+  inherit: 'react-shape',
+  component(props: any) {
+    const data = props.node.getData();
+    return (
+      <DependenciesNode
+        nodeName={data?.nodeName || ''}
+        dependencies={data?.dependencies || []}
+      />
+    );
+  },
+  width: 400,
+  height: 300,
+  attrs: {
+    body: {
+      refWidth: '100%',
+      refHeight: '100%',
+    }
+  }
 });
 
 export {

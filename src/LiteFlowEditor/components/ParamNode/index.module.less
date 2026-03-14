@@ -1,0 +1,175 @@
+.paramNode {
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #bfbfbf;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  font-size: 9px;
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: #e8e8e8;
+  border-bottom: 1px solid #bfbfbf;
+  border-radius: 4px 4px 0 0;
+}
+
+.headerIcon {
+  font-size: 11px;
+  color: #096dd9;
+  font-weight: 600;
+}
+
+.headerTitle {
+  font-size: 9px;
+  font-weight: 600;
+  color: #000000;
+  flex: 1;
+}
+
+.panelContent {
+  padding: 4px;
+}
+
+.noParams {
+  padding: 12px;
+  text-align: center;
+  color: #595959;
+  font-size: 9px;
+}
+
+.paramsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 3px;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #bfbfbf;
+}
+
+.paramsSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  background: #e8e8e8;
+  border-radius: 3px;
+  margin-bottom: 2px;
+}
+
+.paramsSectionHeaderParams {
+  background: #bae7ff;
+}
+
+.paramsSectionIcon {
+  font-size: 10px;
+  color: #096dd9;
+  font-weight: 600;
+}
+
+.paramsSectionTitle {
+  font-size: 8px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.paramsSectionCount {
+  font-size: 7px;
+  color: #595959;
+  margin-left: 2px;
+}
+
+.paramGroup {
+  margin-bottom: 3px;
+  padding: 3px;
+  background: #f5f5f5;
+  border-radius: 3px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.paramGroupHeader {
+  font-size: 8px;
+  font-weight: 600;
+  color: #000000;
+  padding: 2px 4px;
+  background: #e8e8e8;
+  border-radius: 3px;
+  margin-bottom: 2px;
+}
+
+.paramTable {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.paramRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto 2fr;
+  gap: 2px;
+  align-items: center;
+  padding: 3px 4px;
+  background: #f5f5f5;
+  border-radius: 3px;
+  font-size: 8px;
+}
+
+.paramDirection {
+  display: flex;
+  align-items: center;
+}
+
+.directionTag {
+  font-size: 6px;
+  padding: 0 2px;
+  height: 9px;
+  line-height: 7px;
+  margin: 0;
+}
+
+.paramName {
+  font-weight: 600;
+  color: #000000;
+  font-size: 8px;
+}
+
+.paramType {
+  display: flex;
+  align-items: center;
+}
+
+.typeTag {
+  font-size: 7px;
+  padding: 0 2px;
+  height: 11px;
+  line-height: 9px;
+  margin: 0;
+}
+
+.paramRequired {
+  display: flex;
+  align-items: center;
+}
+
+.reqTag {
+  font-size: 6px;
+  padding: 0 2px;
+  height: 9px;
+  line-height: 7px;
+  margin: 0;
+}
+
+.paramDesc {
+  font-size: 8px;
+  color: #434343;
+  line-height: 1.2;
+}
