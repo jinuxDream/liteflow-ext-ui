@@ -4,7 +4,7 @@
   border: 1px solid #bfbfbf;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
-  height: 100%;
+  height: auto;
   overflow: auto;
   font-size: 9px;
 }
@@ -14,14 +14,14 @@
   align-items: center;
   gap: 2px;
   padding: 4px 6px;
-  background: #e8e8e8;
+  background: #ffadd2;
   border-bottom: 1px solid #bfbfbf;
   border-radius: 4px 4px 0 0;
 }
 
 .headerIcon {
   font-size: 11px;
-  color: #389e0d;
+  color: #c41d7f;
   font-weight: 600;
 }
 
@@ -43,61 +43,19 @@
   font-size: 9px;
 }
 
-.dependenciesSection {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 3px;
-  background: #ffffff;
-  border-radius: 4px;
-  border: 1px solid #bfbfbf;
-}
-
-.dependenciesSectionHeader {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px 4px;
-  background: #e8e8e8;
-  border-radius: 3px;
-  margin-bottom: 2px;
-}
-
-.dependenciesSectionHeaderDeps {
-  background: #d9f7be;
-}
-
-.dependenciesSectionIcon {
-  font-size: 10px;
-  color: #389e0d;
-  font-weight: 600;
-}
-
-.dependenciesSectionTitle {
-  font-size: 8px;
-  font-weight: 600;
-  color: #000000;
-}
-
-.dependenciesSectionCount {
-  font-size: 7px;
-  color: #595959;
-  margin-left: 2px;
-}
-
 .dependenciesTable {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .dependencyRow {
   display: grid;
   grid-template-columns: auto 1fr 2fr;
-  gap: 2px;
+  gap: 1px;
   align-items: center;
-  padding: 3px 4px;
-  background: #f5f5f5;
+  padding: 2px 3px;
+  background: #ffffff;
   border-radius: 3px;
   font-size: 8px;
 }
@@ -112,8 +70,8 @@
   padding: 0 2px;
   height: 11px;
   line-height: 9px;
-  background: #d9f7be;
-  color: #389e0d;
+  background: #ffadd2;
+  color: #000000;
   border-radius: 2px;
   font-weight: 600;
 }
@@ -126,6 +84,6 @@
 
 .dependencyDesc {
   font-size: 8px;
-  color: #434343;
-  line-height: 1.2;
+  color: #000000;
+  line-height: 0.9;
 }

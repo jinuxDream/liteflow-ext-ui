@@ -19,26 +19,18 @@ const StepsNode: React.FC<IProps> = ({ nodeName, steps }) => {
     <div className={styles.stepsNode}>
       <div className={styles.panelHeader}>
         <OrderedListOutlined className={styles.headerIcon} />
-        <span className={styles.headerTitle}>{nodeName}</span>
+        <span className={styles.headerTitle}>执行步骤-{nodeName}</span>
       </div>
       
       {hasSteps && (
         <div className={styles.panelContent}>
-          <div className={styles.stepsSection}>
-            <div className={`${styles.stepsSectionHeader} ${styles.stepsSectionHeaderSteps}`}>
-              <OrderedListOutlined className={styles.stepsSectionIcon} />
-              <span className={styles.stepsSectionTitle}>执行步骤</span>
-              <span className={styles.stepsSectionCount}>({steps.length})</span>
-            </div>
-            
-            <div className={styles.stepsList}>
-              {steps.map((step, index) => (
-                <div key={index} className={styles.stepItem}>
-                  <span className={styles.stepNum}>{step.order}.</span>
-                  <span className={styles.stepText}>{step.description}</span>
-                </div>
-              ))}
-            </div>
+          <div className={styles.stepsList}>
+            {steps.map((step, index) => (
+              <div key={index} className={styles.stepItem}>
+                <span className={styles.stepNum}>{step.order}.</span>
+                <span className={styles.stepText}>{step.description}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}

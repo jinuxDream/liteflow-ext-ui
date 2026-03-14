@@ -106,7 +106,6 @@ register({
     );
   },
   width: 400,
-  height: 300,
   attrs: {
     body: {
       refWidth: '100%',
@@ -128,7 +127,6 @@ register({
     );
   },
   width: 400,
-  height: 300,
   attrs: {
     body: {
       refWidth: '100%',
@@ -150,7 +148,6 @@ register({
     );
   },
   width: 400,
-  height: 300,
   attrs: {
     body: {
       refWidth: '100%',

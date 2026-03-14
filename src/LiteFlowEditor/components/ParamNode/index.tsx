@@ -23,70 +23,60 @@ const ParamNode: React.FC<IProps> = ({ nodeName, inputParameters, outputParamete
     <div className={styles.paramNode}>
       <div className={styles.panelHeader}>
         <SettingOutlined className={styles.headerIcon} />
-        <span className={styles.headerTitle}>{nodeName}</span>
+        <span className={styles.headerTitle}>参数-{nodeName}</span>
       </div>
       
       {hasParams && (
         <div className={styles.panelContent}>
-          <div className={styles.paramsSection}>
-            <div className={`${styles.paramsSectionHeader} ${styles.paramsSectionHeaderParams}`}>
-              <SettingOutlined className={styles.paramsSectionIcon} />
-              <span className={styles.paramsSectionTitle}>参数</span>
-              <span className={styles.paramsSectionCount}>
-                ({(inputParameters?.length || 0) + (outputParameters?.length || 0)})
-              </span>
+          {inputParameters?.length > 0 && (
+            <div className={styles.paramGroup}>
+              <div className={styles.paramGroupHeader}>输入参数 ({inputParameters.length})</div>
+              <div className={styles.paramTable}>
+                {inputParameters.map((param, index) => (
+                  <div key={`input-${index}`} className={styles.paramRow}>
+                    <div className={styles.paramDirection}>
+                      <Tag color="blue" className={styles.directionTag}>输入</Tag>
+                    </div>
+                    <div className={styles.paramName}>{param.fieldName}</div>
+                    <div className={styles.paramType}>
+                      <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
+                    </div>
+                    <div className={styles.paramRequired}>
+                      <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
+                        {param.required ? '必填' : '可选'}
+                      </Tag>
+                    </div>
+                    <div className={styles.paramDesc}>{param.description}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-            
-            {inputParameters?.length > 0 && (
-              <div className={styles.paramGroup}>
-                <div className={styles.paramGroupHeader}>输入参数 ({inputParameters.length})</div>
-                <div className={styles.paramTable}>
-                  {inputParameters.map((param, index) => (
-                    <div key={`input-${index}`} className={styles.paramRow}>
-                      <div className={styles.paramDirection}>
-                        <Tag color="blue" className={styles.directionTag}>输入</Tag>
-                      </div>
-                      <div className={styles.paramName}>{param.fieldName}</div>
-                      <div className={styles.paramType}>
-                        <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
-                      </div>
-                      <div className={styles.paramRequired}>
-                        <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
-                          {param.required ? '必填' : '可选'}
-                        </Tag>
-                      </div>
-                      <div className={styles.paramDesc}>{param.description}</div>
+          )}
+          
+          {outputParameters?.length > 0 && (
+            <div className={styles.paramGroup}>
+              <div className={styles.paramGroupHeader}>输出参数 ({outputParameters.length})</div>
+              <div className={styles.paramTable}>
+                {outputParameters.map((param, index) => (
+                  <div key={`output-${index}`} className={styles.paramRow}>
+                    <div className={styles.paramDirection}>
+                      <Tag color="green" className={styles.directionTag}>输出</Tag>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {outputParameters?.length > 0 && (
-              <div className={styles.paramGroup}>
-                <div className={styles.paramGroupHeader}>输出参数 ({outputParameters.length})</div>
-                <div className={styles.paramTable}>
-                  {outputParameters.map((param, index) => (
-                    <div key={`output-${index}`} className={styles.paramRow}>
-                      <div className={styles.paramDirection}>
-                        <Tag color="green" className={styles.directionTag}>输出</Tag>
-                      </div>
-                      <div className={styles.paramName}>{param.fieldName}</div>
-                      <div className={styles.paramType}>
-                        <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
-                      </div>
-                      <div className={styles.paramRequired}>
-                        <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
-                          {param.required ? '必填' : '可选'}
-                        </Tag>
-                      </div>
-                      <div className={styles.paramDesc}>{param.description}</div>
+                    <div className={styles.paramName}>{param.fieldName}</div>
+                    <div className={styles.paramType}>
+                      <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
                     </div>
-                  ))}
-                </div>
+                    <div className={styles.paramRequired}>
+                      <Tag color={param.required ? 'red' : 'default'} className={styles.reqTag}>
+                        {param.required ? '必填' : '可选'}
+                      </Tag>
+                    </div>
+                    <div className={styles.paramDesc}>{param.description}</div>
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
       

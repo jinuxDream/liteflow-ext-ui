@@ -190,12 +190,10 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         const newParamNodesMap: Record<string, string> = {};
         const PANEL_WIDTH = 300;
         const PANEL_HEADER_HEIGHT = 24;
-        const PANEL_PADDING = 8;
-        const PARAM_SECTION_PADDING = 6;
-        const PARAM_SECTION_HEADER_HEIGHT = 18;
-        const PARAM_GROUP_PADDING = 4;
-        const PARAM_GROUP_MARGIN = 4;
-        const PARAM_GROUP_HEADER_HEIGHT = 20;
+        const PANEL_PADDING = 4;
+        const PARAM_GROUP_PADDING = 2;
+        const PARAM_GROUP_MARGIN = 2;
+        const PARAM_GROUP_HEADER_HEIGHT = 18;
         const PARAM_ROW_HEIGHT = 18;
         const MIN_HEIGHT = 80;
         
@@ -223,8 +221,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
               const outputParams = data.model.metadata.outputParameters || [];
               
               let contentHeight = PANEL_PADDING;
-              contentHeight += PARAM_SECTION_PADDING;
-              contentHeight += PARAM_SECTION_HEADER_HEIGHT;
               
               if (inputParams.length > 0) {
                 contentHeight += PARAM_GROUP_PADDING;
@@ -259,6 +255,8 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         
         const occupied: Array<{ x: number; y: number; width: number; height: number }> = [];
         const PANEL_GAP = 20;
+        const TOP_GAP = 40;
+        const BOTTOM_GAP = 40;
         
         let minX = Infinity;
         let maxX = -Infinity;
@@ -278,9 +276,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         const graphCenterX = minX + graphWidth / 2;
         const graphCenterY = minY + graphHeight / 2;
         
-        const topY = minY - 220;
-        const bottomY = maxY + 80;
-        
         let topRowMaxX = minX;
         let bottomRowMaxX = minX;
         
@@ -289,7 +284,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           newParamNodesMap[nodeInfo.id] = paramNodeId;
           
           const isTop = index % 2 === 0;
-          const rowY = isTop ? topY : bottomY;
+          const rowY = isTop ? (minY - TOP_GAP - nodeInfo.height) : (maxY + BOTTOM_GAP);
           
           let position;
           if (isTop) {
@@ -346,7 +341,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             x: position.x,
             y: position.y,
             width: PANEL_WIDTH,
-            height: nodeInfo.height,
             data: {
               isParamNode: true,
               sourceNodeId: nodeInfo.id,
@@ -365,13 +359,20 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           });
           
           const edge = flowGraph.addEdge({
+            id: `edge_${paramNodeId}`,
             source: nodeInfo.id,
             target: paramNodeId,
             attrs: {
               line: {
-                stroke: '#ff4d4f',
+                stroke: '#40a9ff',
                 strokeWidth: 2,
-                strokeDasharray: '5,5'
+                strokeDasharray: '5 5',
+                targetMarker: {
+                  name: 'classic',
+                  size: 12,
+                  fill: '#40a9ff',
+                  stroke: '#40a9ff'
+                }
               }
             },
             connector: 'normal',
@@ -379,9 +380,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             zIndex: 999
           });
           
-          edge.attr('line/stroke', '#ff4d4f');
-          edge.attr('line/strokeWidth', 2);
-          edge.attr('line/strokeDasharray', '5,5');
+          edge.setData({ isParamEdge: true });
         });
         
         setParamNodesMap(newParamNodesMap);
@@ -411,10 +410,8 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         const newStepsNodesMap: Record<string, string> = {};
         const PANEL_WIDTH = 300;
         const PANEL_HEADER_HEIGHT = 24;
-        const PANEL_PADDING = 8;
-        const STEPS_SECTION_PADDING = 6;
-        const STEPS_SECTION_HEADER_HEIGHT = 18;
-        const STEPS_ITEM_HEIGHT = 20;
+        const PANEL_PADDING = 4;
+        const STEPS_ITEM_HEIGHT = 18;
         const MIN_HEIGHT = 80;
         
         const nodesWithSteps: Array<{
@@ -437,8 +434,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
               const steps = data.model.metadata.steps || [];
               
               let contentHeight = PANEL_PADDING;
-              contentHeight += STEPS_SECTION_PADDING;
-              contentHeight += STEPS_SECTION_HEADER_HEIGHT;
               contentHeight += steps.length * STEPS_ITEM_HEIGHT;
               
               const totalHeight = Math.max(PANEL_HEADER_HEIGHT + contentHeight + PANEL_PADDING, MIN_HEIGHT);
@@ -458,7 +453,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         nodesWithSteps.sort((a, b) => a.x - b.x);
         
         const occupied: Array<{ x: number; y: number; width: number; height: number }> = [];
-        const PANEL_GAP = 20;
         
         let minX = Infinity;
         let maxX = -Infinity;
@@ -478,8 +472,9 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         const graphCenterX = minX + graphWidth / 2;
         const graphCenterY = minY + graphHeight / 2;
         
-        const topY = minY - 220;
-        const bottomY = maxY + 80;
+        const PANEL_GAP = 20;
+        const TOP_GAP = 40;
+        const BOTTOM_GAP = 40;
         
         let topRowMaxX = minX;
         let bottomRowMaxX = minX;
@@ -489,7 +484,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           newStepsNodesMap[nodeInfo.id] = stepsNodeId;
           
           const isTop = index % 2 === 0;
-          const rowY = isTop ? topY : bottomY;
+          const rowY = isTop ? (minY - TOP_GAP - nodeInfo.height) : (maxY + BOTTOM_GAP);
           
           let position;
           if (isTop) {
@@ -546,7 +541,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             x: position.x,
             y: position.y,
             width: PANEL_WIDTH,
-            height: nodeInfo.height,
             data: {
               isStepsNode: true,
               sourceNodeId: nodeInfo.id,
@@ -564,13 +558,20 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           });
           
           const edge = flowGraph.addEdge({
+            id: `edge_${stepsNodeId}`,
             source: nodeInfo.id,
             target: stepsNodeId,
             attrs: {
               line: {
-                stroke: '#fa8c16',
+                stroke: '#ffa940',
                 strokeWidth: 2,
-                strokeDasharray: '5,5'
+                strokeDasharray: '5 5',
+                targetMarker: {
+                  name: 'classic',
+                  size: 12,
+                  fill: '#ffa940',
+                  stroke: '#ffa940'
+                }
               }
             },
             connector: 'normal',
@@ -578,9 +579,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             zIndex: 999
           });
           
-          edge.attr('line/stroke', '#fa8c16');
-          edge.attr('line/strokeWidth', 2);
-          edge.attr('line/strokeDasharray', '5,5');
+          edge.setData({ isStepsEdge: true });
         });
         
         setStepsNodesMap(newStepsNodesMap);
@@ -610,10 +609,8 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         const newDependenciesNodesMap: Record<string, string> = {};
         const PANEL_WIDTH = 300;
         const PANEL_HEADER_HEIGHT = 24;
-        const PANEL_PADDING = 8;
-        const DEPENDENCIES_SECTION_PADDING = 6;
-        const DEPENDENCIES_SECTION_HEADER_HEIGHT = 18;
-        const DEPENDENCY_ITEM_HEIGHT = 30;
+        const PANEL_PADDING = 4;
+        const DEPENDENCY_ITEM_HEIGHT = 18;
         const MIN_HEIGHT = 80;
         
         const nodesWithDependencies: Array<{
@@ -636,8 +633,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
               const dependencies = data.model.metadata.dependencies || [];
               
               let contentHeight = PANEL_PADDING;
-              contentHeight += DEPENDENCIES_SECTION_PADDING;
-              contentHeight += DEPENDENCIES_SECTION_HEADER_HEIGHT;
               contentHeight += dependencies.length * DEPENDENCY_ITEM_HEIGHT;
               
               const totalHeight = Math.max(PANEL_HEADER_HEIGHT + contentHeight + PANEL_PADDING, MIN_HEIGHT);
@@ -657,7 +652,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         nodesWithDependencies.sort((a, b) => a.x - b.x);
         
         const occupied: Array<{ x: number; y: number; width: number; height: number }> = [];
-        const PANEL_GAP = 20;
         
         let minX = Infinity;
         let maxX = -Infinity;
@@ -677,8 +671,9 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         const graphCenterX = minX + graphWidth / 2;
         const graphCenterY = minY + graphHeight / 2;
         
-        const topY = minY - 220;
-        const bottomY = maxY + 80;
+        const PANEL_GAP = 20;
+        const TOP_GAP = 40;
+        const BOTTOM_GAP = 40;
         
         let topRowMaxX = minX;
         let bottomRowMaxX = minX;
@@ -688,7 +683,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           newDependenciesNodesMap[nodeInfo.id] = dependenciesNodeId;
           
           const isTop = index % 2 === 0;
-          const rowY = isTop ? topY : bottomY;
+          const rowY = isTop ? (minY - TOP_GAP - nodeInfo.height) : (maxY + BOTTOM_GAP);
           
           let position;
           if (isTop) {
@@ -745,7 +740,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             x: position.x,
             y: position.y,
             width: PANEL_WIDTH,
-            height: nodeInfo.height,
             data: {
               isDependenciesNode: true,
               sourceNodeId: nodeInfo.id,
@@ -763,13 +757,20 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           });
           
           const edge = flowGraph.addEdge({
+            id: `edge_${dependenciesNodeId}`,
             source: nodeInfo.id,
             target: dependenciesNodeId,
             attrs: {
               line: {
-                stroke: '#52c41a',
+                stroke: '#ffadd2',
                 strokeWidth: 2,
-                strokeDasharray: '5,5'
+                strokeDasharray: '5 5',
+                targetMarker: {
+                  name: 'classic',
+                  size: 12,
+                  fill: '#ffadd2',
+                  stroke: '#ffadd2'
+                }
               }
             },
             connector: 'normal',
@@ -777,9 +778,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             zIndex: 999
           });
           
-          edge.attr('line/stroke', '#52c41a');
-          edge.attr('line/strokeWidth', 2);
-          edge.attr('line/strokeDasharray', '5,5');
+          edge.setData({ isDependenciesEdge: true });
         });
         
         setDependenciesNodesMap(newDependenciesNodesMap);

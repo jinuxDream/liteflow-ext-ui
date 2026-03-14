@@ -89,9 +89,24 @@
   .x6-widget-dnd.dragging {
     pointer-events: none;
   }
-  .x6-edge path:nth-child(2) {
+  .x6-edge:not([data-cell-id^="edge_param"]):not([data-cell-id^="edge_steps"]):not([data-cell-id^="edge_dependencies"]) path:nth-child(2) {
     stroke: #c1c1c1;
     stroke-width: 1px;
+  }
+  .x6-edge[data-cell-id^="edge_param"] path:nth-child(2) {
+    stroke: #40a9ff !important;
+    stroke-width: 2px !important;
+    stroke-dasharray: 5 5 !important;
+  }
+  .x6-edge[data-cell-id^="edge_steps"] path:nth-child(2) {
+    stroke: #ffa940 !important;
+    stroke-width: 2px !important;
+    stroke-dasharray: 5 5 !important;
+  }
+  .x6-edge[data-cell-id^="edge_dependencies"] path:nth-child(2) {
+    stroke: #ffadd2 !important;
+    stroke-width: 2px !important;
+    stroke-dasharray: 5 5 !important;
   }
   .x6-edge:hover,
   .x6-edge.edge-moving,
@@ -100,6 +115,11 @@
       stroke: #feb663;
       stroke-width: 3px;
     }
+  }
+  .x6-edge[data-cell-id^="edge_param"]:hover path:nth-child(2),
+  .x6-edge[data-cell-id^="edge_steps"]:hover path:nth-child(2),
+  .x6-edge[data-cell-id^="edge_dependencies"]:hover path:nth-child(2) {
+    stroke-width: 3px !important;
   }
   // .x6-node {
   //   .x6-port-body {

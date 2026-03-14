@@ -20,29 +20,21 @@ const DependenciesNode: React.FC<IProps> = ({ nodeName, dependencies }) => {
     <div className={styles.dependenciesNode}>
       <div className={styles.panelHeader}>
         <ClusterOutlined className={styles.headerIcon} />
-        <span className={styles.headerTitle}>{nodeName}</span>
+        <span className={styles.headerTitle}>依赖清单-{nodeName}</span>
       </div>
       
       {hasDependencies && (
         <div className={styles.panelContent}>
-          <div className={styles.dependenciesSection}>
-            <div className={`${styles.dependenciesSectionHeader} ${styles.dependenciesSectionHeaderDeps}`}>
-              <ClusterOutlined className={styles.dependenciesSectionIcon} />
-              <span className={styles.dependenciesSectionTitle}>依赖清单</span>
-              <span className={styles.dependenciesSectionCount}>({dependencies.length})</span>
-            </div>
-            
-            <div className={styles.dependenciesTable}>
-              {dependencies.map((dep, index) => (
-                <div key={index} className={styles.dependencyRow}>
-                  <div className={styles.dependencyType}>
-                    <span className={styles.typeTag}>{dep.type}</span>
-                  </div>
-                  <div className={styles.dependencyName}>{dep.name}</div>
-                  <div className={styles.dependencyDesc}>{dep.description}</div>
+          <div className={styles.dependenciesTable}>
+            {dependencies.map((dep, index) => (
+              <div key={index} className={styles.dependencyRow}>
+                <div className={styles.dependencyType}>
+                  <span className={styles.typeTag}>{dep.type}</span>
                 </div>
-              ))}
-            </div>
+                <div className={styles.dependencyName}>{dep.name}</div>
+                <div className={styles.dependencyDesc}>{dep.description}</div>
+              </div>
+            ))}
           </div>
         </div>
       )}
