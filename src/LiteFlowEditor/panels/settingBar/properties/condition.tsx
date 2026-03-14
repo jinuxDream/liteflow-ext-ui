@@ -30,7 +30,6 @@ const ConditionPropertiesEditor: React.FC<IProps> = (props) => {
       model.setProperties({ ...properties, ...changedValues });
       history.push(undefined, { silent: true });
     } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
     }
   }, 200);
 

@@ -184,10 +184,8 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
     };
     
     const handleShowParams = () => {
-      console.log('Show params triggered');
       if (flowGraph) {
         const nodes = flowGraph.getNodes();
-        console.log('Found nodes:', nodes.length);
         
         const newParamNodesMap: Record<string, string> = {};
         const PANEL_WIDTH = 300;
@@ -224,8 +222,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
               const inputParams = data.model.metadata.inputParameters || [];
               const outputParams = data.model.metadata.outputParameters || [];
               
-              console.log('Node with params:', node.id, 'input:', inputParams.length, 'output:', outputParams.length);
-              
               let contentHeight = PANEL_PADDING;
               contentHeight += PARAM_SECTION_PADDING;
               contentHeight += PARAM_SECTION_HEADER_HEIGHT;
@@ -255,13 +251,9 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
                 inputParameters: inputParams,
                 outputParameters: outputParams
               });
-            } else {
-              console.log('Node without params:', node.id);
             }
           }
         });
-        
-        console.log('Nodes with params:', nodesWithParams.length);
         
         nodesWithParams.sort((a, b) => a.x - b.x);
         
@@ -348,8 +340,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             height: nodeInfo.height
           });
           
-          console.log('Creating param node:', paramNodeId, 'at position:', position, 'with height:', nodeInfo.height);
-          
           const paramNode = flowGraph.addNode({
             id: paramNodeId,
             shape: 'param-node',
@@ -394,14 +384,12 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           edge.attr('line/strokeDasharray', '5,5');
         });
         
-        console.log('Param nodes map:', newParamNodesMap);
         setParamNodesMap(newParamNodesMap);
         paramNodesMapRef.current = newParamNodesMap;
       }
     };
     
     const handleHideParams = () => {
-      console.log('Hide params triggered');
       if (flowGraph) {
         Object.values(paramNodesMapRef.current).forEach(paramNodeId => {
           const paramNode = flowGraph.getCellById(paramNodeId);
@@ -417,10 +405,8 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
     };
     
     const handleShowSteps = () => {
-      console.log('Show steps triggered');
       if (flowGraph) {
         const nodes = flowGraph.getNodes();
-        console.log('Found nodes:', nodes.length);
         
         const newStepsNodesMap: Record<string, string> = {};
         const PANEL_WIDTH = 300;
@@ -450,8 +436,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
               
               const steps = data.model.metadata.steps || [];
               
-              console.log('Node with steps:', node.id, 'steps:', steps.length);
-              
               let contentHeight = PANEL_PADDING;
               contentHeight += STEPS_SECTION_PADDING;
               contentHeight += STEPS_SECTION_HEADER_HEIGHT;
@@ -467,13 +451,9 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
                 nodeName: data.model.metadata.nodeName,
                 steps: steps
               });
-            } else {
-              console.log('Node without steps:', node.id);
             }
           }
         });
-        
-        console.log('Nodes with steps:', nodesWithSteps.length);
         
         nodesWithSteps.sort((a, b) => a.x - b.x);
         
@@ -560,8 +540,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             height: nodeInfo.height
           });
           
-          console.log('Creating steps node:', stepsNodeId, 'at position:', position, 'with height:', nodeInfo.height);
-          
           const stepsNode = flowGraph.addNode({
             id: stepsNodeId,
             shape: 'steps-node',
@@ -605,14 +583,12 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           edge.attr('line/strokeDasharray', '5,5');
         });
         
-        console.log('Steps nodes map:', newStepsNodesMap);
         setStepsNodesMap(newStepsNodesMap);
         stepsNodesMapRef.current = newStepsNodesMap;
       }
     };
     
     const handleHideSteps = () => {
-      console.log('Hide steps triggered');
       if (flowGraph) {
         Object.values(stepsNodesMapRef.current).forEach(stepsNodeId => {
           const stepsNode = flowGraph.getCellById(stepsNodeId);
@@ -628,10 +604,8 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
     };
     
     const handleShowDependencies = () => {
-      console.log('Show dependencies triggered');
       if (flowGraph) {
         const nodes = flowGraph.getNodes();
-        console.log('Found nodes:', nodes.length);
         
         const newDependenciesNodesMap: Record<string, string> = {};
         const PANEL_WIDTH = 300;
@@ -661,8 +635,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
               
               const dependencies = data.model.metadata.dependencies || [];
               
-              console.log('Node with dependencies:', node.id, 'dependencies:', dependencies.length);
-              
               let contentHeight = PANEL_PADDING;
               contentHeight += DEPENDENCIES_SECTION_PADDING;
               contentHeight += DEPENDENCIES_SECTION_HEADER_HEIGHT;
@@ -678,13 +650,9 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
                 nodeName: data.model.metadata.nodeName,
                 dependencies: dependencies
               });
-            } else {
-              console.log('Node without dependencies:', node.id);
             }
           }
         });
-        
-        console.log('Nodes with dependencies:', nodesWithDependencies.length);
         
         nodesWithDependencies.sort((a, b) => a.x - b.x);
         
@@ -771,8 +739,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
             height: nodeInfo.height
           });
           
-          console.log('Creating dependencies node:', dependenciesNodeId, 'at position:', position, 'with height:', nodeInfo.height);
-          
           const dependenciesNode = flowGraph.addNode({
             id: dependenciesNodeId,
             shape: 'dependencies-node',
@@ -816,14 +782,12 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           edge.attr('line/strokeDasharray', '5,5');
         });
         
-        console.log('Dependencies nodes map:', newDependenciesNodesMap);
         setDependenciesNodesMap(newDependenciesNodesMap);
         dependenciesNodesMapRef.current = newDependenciesNodesMap;
       }
     };
     
     const handleHideDependencies = () => {
-      console.log('Hide dependencies triggered');
       if (flowGraph) {
         Object.values(dependenciesNodesMapRef.current).forEach(dependenciesNodeId => {
           const dependenciesNode = flowGraph.getCellById(dependenciesNodeId);

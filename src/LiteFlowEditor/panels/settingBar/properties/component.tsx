@@ -36,7 +36,6 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
         .updateAttrs({label: { text: id }})
         .setSize(originSize);
     } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
     }
   }, 200);
 

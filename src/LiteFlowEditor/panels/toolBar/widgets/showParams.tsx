@@ -13,7 +13,6 @@ const ShowParamsWidget: React.FC<IProps> = ({ flowGraph }) => {
 
   const handleClick = () => {
     const newShowParams = !showParams;
-    console.log('Toggle showParams:', { current: showParams, new: newShowParams });
     toggleShowParams();
     
     flowGraph.trigger('node:showParamsChanged', { showParams: newShowParams });

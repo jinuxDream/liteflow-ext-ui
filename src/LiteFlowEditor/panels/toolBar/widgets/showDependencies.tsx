@@ -13,7 +13,6 @@ const ShowDependenciesWidget: React.FC<IProps> = ({ flowGraph }) => {
 
   const handleClick = () => {
     const newShowDependencies = !showDependencies;
-    console.log('Toggle showDependencies:', { current: showDependencies, new: newShowDependencies });
     toggleShowDependencies();
     
     flowGraph.trigger('node:showDependenciesChanged', { showDependencies: newShowDependencies });

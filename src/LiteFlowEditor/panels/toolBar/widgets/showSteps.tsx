@@ -13,7 +13,6 @@ const ShowStepsWidget: React.FC<IProps> = ({ flowGraph }) => {
 
   const handleClick = () => {
     const newShowSteps = !showSteps;
-    console.log('Toggle showSteps:', { current: showSteps, new: newShowSteps });
     toggleShowSteps();
     
     flowGraph.trigger('node:showStepsChanged', { showSteps: newShowSteps });

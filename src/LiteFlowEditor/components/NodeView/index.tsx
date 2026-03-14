@@ -23,28 +23,20 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
   
   try {
     const data = node.getData();
-    console.log('NodeView - node data:', data);
     if (data && data.model) {
       nodeId = data.model.id;
       metadata = data.model.metadata;
-      console.log('NodeView - metadata:', metadata);
-      console.log('NodeView - inputParameters:', metadata?.inputParameters);
-      console.log('NodeView - outputParameters:', metadata?.outputParameters);
     }
     
     const showParamsProp = node.getProp('showParams');
     if (showParamsProp !== undefined) {
       nodeShowParams = showParamsProp;
-      console.log('NodeView - nodeShowParams from prop:', nodeShowParams);
     } else if (data && data._showParams !== undefined) {
       nodeShowParams = data._showParams;
-      console.log('NodeView - nodeShowParams from data._showParams:', nodeShowParams);
     }
   } catch (error) {
     console.error('NodeView - error:', error);
   }
-  
-  console.log('NodeView render - showParams:', nodeShowParams);
   
   const displayText = metadata?.nodeName || nodeId;
   const nodeIdContent = displayText ? (
@@ -54,24 +46,17 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
   ) : null;
 
   const renderParams = () => {
-    console.log('renderParams called - showParams:', nodeShowParams, 'metadata:', !!metadata);
-    
     if (!nodeShowParams || !metadata) {
-      console.log('renderParams returning null - showParams:', nodeShowParams, 'metadata:', !!metadata);
       return null;
     }
 
     const inputParams = metadata.inputParameters || [];
     const outputParams = metadata.outputParameters || [];
 
-    console.log('renderParams - inputParams length:', inputParams.length, 'outputParams length:', outputParams.length);
-
     if (inputParams.length === 0 && outputParams.length === 0) {
-      console.log('renderParams returning null - no params');
       return null;
     }
 
-    console.log('renderParams returning params container');
     return (
       <div className={styles.paramsContainer}>
         <div className={styles.paramsSection}>

@@ -32,7 +32,6 @@ const View: React.FC<IProps> = makeBtnWidget({
         />
       ),
     });
-    console.log(JSON.stringify(model.toJSON(), null, 2));
   },
   getIcon() {
     return <EyeOutlined />;
