@@ -200,6 +200,10 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
       <div className={styles.metadataSection}>
         {renderMetadata()}
       </div>
+      
+      <div className={styles.endMarker}>
+        <span className={styles.endText}>— END —</span>
+      </div>
     </div>
   );
 };
