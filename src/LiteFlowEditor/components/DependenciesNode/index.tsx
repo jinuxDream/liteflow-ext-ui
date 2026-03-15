@@ -17,7 +17,10 @@ const DependenciesNode: React.FC<IProps> = ({ nodeName, dependencies }) => {
   const hasDependencies = dependencies?.length > 0;
 
   return (
-    <div className={styles.dependenciesNode}>
+    <div 
+      className={styles.dependenciesNode}
+      onDoubleClick={(e) => e.stopPropagation()}
+    >
       <div className={styles.panelHeader}>
         <ClusterOutlined className={styles.headerIcon} />
         <span className={styles.headerTitle}>依赖清单-{nodeName}</span>

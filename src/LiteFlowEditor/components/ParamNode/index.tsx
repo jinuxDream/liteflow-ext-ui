@@ -20,7 +20,10 @@ const ParamNode: React.FC<IProps> = ({ nodeName, inputParameters, outputParamete
   const hasParams = (inputParameters?.length > 0 || outputParameters?.length > 0);
 
   return (
-    <div className={styles.paramNode}>
+    <div 
+      className={styles.paramNode}
+      onDoubleClick={(e) => e.stopPropagation()}
+    >
       <div className={styles.panelHeader}>
         <SettingOutlined className={styles.headerIcon} />
         <span className={styles.headerTitle}>参数-{nodeName}</span>

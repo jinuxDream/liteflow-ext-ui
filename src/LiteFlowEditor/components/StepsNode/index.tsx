@@ -16,7 +16,10 @@ const StepsNode: React.FC<IProps> = ({ nodeName, steps }) => {
   const hasSteps = steps?.length > 0;
 
   return (
-    <div className={styles.stepsNode}>
+    <div 
+      className={styles.stepsNode}
+      onDoubleClick={(e) => e.stopPropagation()}
+    >
       <div className={styles.panelHeader}>
         <OrderedListOutlined className={styles.headerIcon} />
         <span className={styles.headerTitle}>执行步骤-{nodeName}</span>

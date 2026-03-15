@@ -50,8 +50,10 @@ const SettingBar: React.FC<IProps> = (props) => {
   const nodes = flowGraph.getSelectedCells().filter((v) => !v.isEdge());
   let currentModel;
   if (selectedModel || nodes.length === 1) {
-    currentModel = selectedModel || nodes[0].getData().model;
-    currentModel = currentModel.proxy || currentModel;
+    currentModel = selectedModel || (nodes[0]?.getData()?.model);
+    if (currentModel) {
+      currentModel = currentModel.proxy || currentModel;
+    }
   }
 
   let propertiesPanel = <Basic flowGraph={flowGraph} />;

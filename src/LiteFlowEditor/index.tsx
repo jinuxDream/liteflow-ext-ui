@@ -338,7 +338,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
                 refHeight: '100%',
               }
             },
-            interactive: false,
+            interactive: true,
             zIndex: 1000
           });
           
@@ -520,7 +520,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
                 refHeight: '100%',
               }
             },
-            interactive: false,
+            interactive: true,
             zIndex: 1000
           });
           
@@ -702,7 +702,7 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
                 refHeight: '100%',
               }
             },
-            interactive: false,
+            interactive: true,
             zIndex: 1000
           });
           

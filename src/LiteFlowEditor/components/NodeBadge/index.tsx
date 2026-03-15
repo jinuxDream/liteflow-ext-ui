@@ -7,7 +7,8 @@ import styles from './index.module.less';
 
 const NodeBadge: React.FC<{ node: Node }> = (props) => {
   const { node } = props.node as any;
-  const { model } = node.getData();
+  const data = node.getData();
+  const model = data?.model;
   let badge = null
   if (model) {
     const currentModel = model.proxy || model;

@@ -115,15 +115,16 @@ function fineTuneCatchNodes(flowGraph: Graph) {
   while (queue.length) {
     let cells: Node[] = [];
     queue.forEach((next: Node) => {
-      const { model } = next.getData();
-      const currentModel = model.proxy || model;
-      if (currentModel.type === ConditionTypeEnum.CATCH) {
-        if (next.shape === ConditionTypeEnum.CATCH) {
-          // CATCH start
-          beforeCatchStart(flowGraph, next);
-        } else {
-          // CATCH end
-          afterCatchEnd(flowGraph, next);
+      const data = next.getData();
+      const model = data?.model;
+      if (model) {
+        const currentModel = model.proxy || model;
+        if (currentModel.type === ConditionTypeEnum.CATCH) {
+          if (next.shape === ConditionTypeEnum.CATCH) {
+            beforeCatchStart(flowGraph, next);
+          } else {
+            afterCatchEnd(flowGraph, next);
+          }
         }
       }
 

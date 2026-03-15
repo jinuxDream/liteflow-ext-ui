@@ -35,13 +35,15 @@ const BreadcrumbPath: React.FC<IProps> = (props) => {
   const nodes = flowGraph.getSelectedCells().filter((v) => !v.isEdge());
   const parents: ELNode[] = [];
   if (selectedModel || nodes.length === 1) {
-    const currentModel = selectedModel || nodes[0].getData().model;
-    let nextModel = currentModel.proxy || currentModel;
-    while (nextModel) {
-      if (nextModel.parent) {
-        parents.splice(0, 0, nextModel);
+    const currentModel = selectedModel || (nodes[0]?.getData()?.model);
+    if (currentModel) {
+      let nextModel = currentModel.proxy || currentModel;
+      while (nextModel) {
+        if (nextModel.parent) {
+          parents.splice(0, 0, nextModel);
+        }
+        nextModel = nextModel.parent;
       }
-      nextModel = nextModel.parent;
     }
   }
 
