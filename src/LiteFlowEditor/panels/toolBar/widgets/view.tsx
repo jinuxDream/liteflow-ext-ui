@@ -1,4 +1,4 @@
-import { EyeOutlined } from '@ant-design/icons';
+import { ApiOutlined } from '@ant-design/icons';
 import { Graph } from '@antv/x6';
 import React from 'react';
 import { Modal } from 'antd';
@@ -25,16 +25,23 @@ const View: React.FC<IProps> = makeBtnWidget({
         <JsonView
           name={null}
           collapsed={false}
-          enableClipboard={true}
+          enableClipboard={false}
           displayDataTypes={false}
           displayObjectSize={false}
+          indentWidth={2}
+          groupArraysAfterLength={10}
+          style={{
+            fontSize: '12px',
+            lineHeight: '1.4',
+            padding: '8px'
+          }}
           src={JSON.parse(JSON.stringify(model.toJSON()))}
         />
       ),
     });
   },
   getIcon() {
-    return <EyeOutlined />;
+    return <ApiOutlined />;
   },
   disabled(flowGraph: Graph) {
     return false;

@@ -254,9 +254,6 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
         nodesWithParams.sort((a, b) => a.x - b.x);
         
         const occupied: Array<{ x: number; y: number; width: number; height: number }> = [];
-        const PANEL_GAP = 20;
-        const TOP_GAP = 40;
-        const BOTTOM_GAP = 40;
         
         let minX = Infinity;
         let maxX = -Infinity;
@@ -271,61 +268,48 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           maxY = Math.max(maxY, bbox.y + bbox.height);
         });
         
-        const graphWidth = maxX - minX;
-        const graphHeight = maxY - minY;
-        const graphCenterX = minX + graphWidth / 2;
-        const graphCenterY = minY + graphHeight / 2;
-        
-        let topRowMaxX = minX;
-        let bottomRowMaxX = minX;
+        const graphCenterX = minX + (maxX - minX) / 2;
+        const graphCenterY = minY + (maxY - minY) / 2;
+        const baseRadius = Math.max(maxX - minX, maxY - minY) / 2;
+        const RADIUS = baseRadius + 10 + nodesWithParams.length * 5;
+        const NODE_GAP = 10;
         
         nodesWithParams.forEach((nodeInfo, index) => {
           const paramNodeId = `param_${nodeInfo.id}`;
           newParamNodesMap[nodeInfo.id] = paramNodeId;
           
-          const isTop = index % 2 === 0;
-          const rowY = isTop ? (minY - TOP_GAP - nodeInfo.height) : (maxY + BOTTOM_GAP);
+          let currentAngle = Math.PI * 1.25;
           
-          let position;
-          if (isTop) {
-            position = {
-              x: topRowMaxX,
-              y: rowY
-            };
-          } else {
-            position = {
-              x: bottomRowMaxX,
-              y: rowY
-            };
-          }
+          let position = {
+            x: graphCenterX + RADIUS * Math.cos(currentAngle) - PANEL_WIDTH / 2,
+            y: graphCenterY + RADIUS * Math.sin(currentAngle) - nodeInfo.height
+          };
           
           let hasOverlap = true;
           let attempts = 0;
-          const maxAttempts = 100;
+          const maxAttempts = 360;
           
           while (hasOverlap && attempts < maxAttempts) {
             hasOverlap = false;
             
             for (const rect of occupied) {
               if (
-                position.x < rect.x + rect.width + PANEL_GAP &&
-                position.x + PANEL_WIDTH + PANEL_GAP > rect.x &&
-                position.y < rect.y + rect.height + PANEL_GAP &&
-                position.y + nodeInfo.height + PANEL_GAP > rect.y
+                position.x < rect.x + rect.width + NODE_GAP &&
+                position.x + PANEL_WIDTH + NODE_GAP > rect.x &&
+                position.y < rect.y + rect.height + NODE_GAP &&
+                position.y + nodeInfo.height + NODE_GAP > rect.y
               ) {
                 hasOverlap = true;
-                position.x += PANEL_WIDTH + PANEL_GAP;
+                currentAngle += 0.017;
+                position = {
+                  x: graphCenterX + RADIUS * Math.cos(currentAngle) - PANEL_WIDTH / 2,
+                  y: graphCenterY + RADIUS * Math.sin(currentAngle) - nodeInfo.height
+                };
                 break;
               }
             }
             
             attempts++;
-          }
-          
-          if (isTop) {
-            topRowMaxX = position.x + PANEL_WIDTH + PANEL_GAP;
-          } else {
-            bottomRowMaxX = position.x + PANEL_WIDTH + PANEL_GAP;
           }
           
           occupied.push({
@@ -467,65 +451,48 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           maxY = Math.max(maxY, bbox.y + bbox.height);
         });
         
-        const graphWidth = maxX - minX;
-        const graphHeight = maxY - minY;
-        const graphCenterX = minX + graphWidth / 2;
-        const graphCenterY = minY + graphHeight / 2;
-        
-        const PANEL_GAP = 20;
-        const TOP_GAP = 40;
-        const BOTTOM_GAP = 40;
-        
-        let topRowMaxX = minX;
-        let bottomRowMaxX = minX;
+        const graphCenterX = minX + (maxX - minX) / 2;
+        const graphCenterY = minY + (maxY - minY) / 2;
+        const baseRadius = Math.max(maxX - minX, maxY - minY) / 2;
+        const RADIUS = baseRadius + 10 + nodesWithSteps.length * 5;
+        const NODE_GAP = 10;
         
         nodesWithSteps.forEach((nodeInfo, index) => {
           const stepsNodeId = `steps_${nodeInfo.id}`;
           newStepsNodesMap[nodeInfo.id] = stepsNodeId;
           
-          const isTop = index % 2 === 0;
-          const rowY = isTop ? (minY - TOP_GAP - nodeInfo.height) : (maxY + BOTTOM_GAP);
+          let currentAngle = Math.PI * 1.25;
           
-          let position;
-          if (isTop) {
-            position = {
-              x: topRowMaxX,
-              y: rowY
-            };
-          } else {
-            position = {
-              x: bottomRowMaxX,
-              y: rowY
-            };
-          }
+          let position = {
+            x: graphCenterX + RADIUS * Math.cos(currentAngle) - PANEL_WIDTH / 2,
+            y: graphCenterY + RADIUS * Math.sin(currentAngle) - nodeInfo.height
+          };
           
           let hasOverlap = true;
           let attempts = 0;
-          const maxAttempts = 100;
+          const maxAttempts = 360;
           
           while (hasOverlap && attempts < maxAttempts) {
             hasOverlap = false;
             
             for (const rect of occupied) {
               if (
-                position.x < rect.x + rect.width + PANEL_GAP &&
-                position.x + PANEL_WIDTH + PANEL_GAP > rect.x &&
-                position.y < rect.y + rect.height + PANEL_GAP &&
-                position.y + nodeInfo.height + PANEL_GAP > rect.y
+                position.x < rect.x + rect.width + NODE_GAP &&
+                position.x + PANEL_WIDTH + NODE_GAP > rect.x &&
+                position.y < rect.y + rect.height + NODE_GAP &&
+                position.y + nodeInfo.height + NODE_GAP > rect.y
               ) {
                 hasOverlap = true;
-                position.x += PANEL_WIDTH + PANEL_GAP;
+                currentAngle += 0.017;
+                position = {
+                  x: graphCenterX + RADIUS * Math.cos(currentAngle) - PANEL_WIDTH / 2,
+                  y: graphCenterY + RADIUS * Math.sin(currentAngle) - nodeInfo.height
+                };
                 break;
               }
             }
             
             attempts++;
-          }
-          
-          if (isTop) {
-            topRowMaxX = position.x + PANEL_WIDTH + PANEL_GAP;
-          } else {
-            bottomRowMaxX = position.x + PANEL_WIDTH + PANEL_GAP;
           }
           
           occupied.push({
@@ -666,65 +633,48 @@ const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (prop
           maxY = Math.max(maxY, bbox.y + bbox.height);
         });
         
-        const graphWidth = maxX - minX;
-        const graphHeight = maxY - minY;
-        const graphCenterX = minX + graphWidth / 2;
-        const graphCenterY = minY + graphHeight / 2;
-        
-        const PANEL_GAP = 20;
-        const TOP_GAP = 40;
-        const BOTTOM_GAP = 40;
-        
-        let topRowMaxX = minX;
-        let bottomRowMaxX = minX;
+        const graphCenterX = minX + (maxX - minX) / 2;
+        const graphCenterY = minY + (maxY - minY) / 2;
+        const baseRadius = Math.max(maxX - minX, maxY - minY) / 2;
+        const RADIUS = baseRadius + 10 + nodesWithDependencies.length * 5;
+        const NODE_GAP = 10;
         
         nodesWithDependencies.forEach((nodeInfo, index) => {
           const dependenciesNodeId = `dependencies_${nodeInfo.id}`;
           newDependenciesNodesMap[nodeInfo.id] = dependenciesNodeId;
           
-          const isTop = index % 2 === 0;
-          const rowY = isTop ? (minY - TOP_GAP - nodeInfo.height) : (maxY + BOTTOM_GAP);
+          let currentAngle = Math.PI * 1.25;
           
-          let position;
-          if (isTop) {
-            position = {
-              x: topRowMaxX,
-              y: rowY
-            };
-          } else {
-            position = {
-              x: bottomRowMaxX,
-              y: rowY
-            };
-          }
+          let position = {
+            x: graphCenterX + RADIUS * Math.cos(currentAngle) - PANEL_WIDTH / 2,
+            y: graphCenterY + RADIUS * Math.sin(currentAngle) - nodeInfo.height
+          };
           
           let hasOverlap = true;
           let attempts = 0;
-          const maxAttempts = 100;
+          const maxAttempts = 360;
           
           while (hasOverlap && attempts < maxAttempts) {
             hasOverlap = false;
             
             for (const rect of occupied) {
               if (
-                position.x < rect.x + rect.width + PANEL_GAP &&
-                position.x + PANEL_WIDTH + PANEL_GAP > rect.x &&
-                position.y < rect.y + rect.height + PANEL_GAP &&
-                position.y + nodeInfo.height + PANEL_GAP > rect.y
+                position.x < rect.x + rect.width + NODE_GAP &&
+                position.x + PANEL_WIDTH + NODE_GAP > rect.x &&
+                position.y < rect.y + rect.height + NODE_GAP &&
+                position.y + nodeInfo.height + NODE_GAP > rect.y
               ) {
                 hasOverlap = true;
-                position.x += PANEL_WIDTH + PANEL_GAP;
+                currentAngle += 0.017;
+                position = {
+                  x: graphCenterX + RADIUS * Math.cos(currentAngle) - PANEL_WIDTH / 2,
+                  y: graphCenterY + RADIUS * Math.sin(currentAngle) - nodeInfo.height
+                };
                 break;
               }
             }
             
             attempts++;
-          }
-          
-          if (isTop) {
-            topRowMaxX = position.x + PANEL_WIDTH + PANEL_GAP;
-          } else {
-            bottomRowMaxX = position.x + PANEL_WIDTH + PANEL_GAP;
           }
           
           occupied.push({

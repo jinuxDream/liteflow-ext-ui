@@ -14,6 +14,7 @@ import Mock from './mock';
 import ShowParams from './showParams';
 import ShowSteps from './showSteps';
 import ShowDependencies from './showDependencies';
+import ShowAll from './showAll';
 
 interface IProps {
   flowGraph: Graph;
@@ -21,7 +22,7 @@ interface IProps {
 
 const tools: React.FC<IProps>[][] = [
   [Zoom],
-  [FitWindow, Undo, Redo, Selection, Save, View, Fullscreen, ShowParams, ShowSteps, ShowDependencies],
+  [FitWindow, Undo, Redo, Selection, Save, View, Fullscreen, ShowParams, ShowSteps, ShowDependencies, ShowAll],
 ];
 
 export default tools;
