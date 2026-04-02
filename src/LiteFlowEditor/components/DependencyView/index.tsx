@@ -193,7 +193,6 @@ const DependencyView: React.FC<DependencyViewProps> = ({
           rowKey="name"
           pagination={false}
           size="small"
-          scroll={{ x: 'max-content' }}
           className={styles.matrixTable}
           rowClassName={(record) => selectedDep === record.name ? styles.highlightRow : ''}
         />

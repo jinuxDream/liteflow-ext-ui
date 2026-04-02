@@ -418,10 +418,10 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
 
       // 计算行数
       const rows = Math.ceil(contents.length / cols);
-      // 面板总高度：标题50px + 每行节点高度 + 间距
+      // 面板高度自适应内容
       const estimatedPanelHeight = 50 + rows * (maxNodeHeight + 12) + 20;
 
-      // 面板放在流程图上方
+      // 面板放在流程图上方（顶部位置）
       const panelY = minY - estimatedPanelHeight - 20;
 
       // 移除旧的内容面板节点和连线
@@ -511,31 +511,53 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
           }
         });
 
-        // 更新画布内容区域
+        // 更新画布内容区域，确保面板在视口顶部可见
         setTimeout(() => {
           if (flowGraph) {
-            // 获取所有节点的边界
+            // 获取所有节点的边界（包括面板）
             const allNodes = flowGraph.getNodes();
             let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            let panelNode = null;
+
             allNodes.forEach(node => {
               const bbox = node.getBBox();
               minX = Math.min(minX, bbox.x);
               maxX = Math.max(maxX, bbox.x + bbox.width);
               minY = Math.min(minY, bbox.y);
               maxY = Math.max(maxY, bbox.y + bbox.height);
+
+              // 找到面板节点
+              if (node.id && node.id.startsWith('content-panel-')) {
+                panelNode = node;
+              }
             });
 
-            // 扩展边界以包含所有内容
-            const padding = 50;
-            minX -= padding;
-            minY -= padding;
-            maxX += padding;
-            maxY += padding;
+            // 计算内容的宽高
+            const contentWidth = maxX - minX;
+            const contentHeight = maxY - minY;
 
-            // 调整视图
-            flowGraph.zoomToFit({ minScale: 0.05, maxScale: 0.8 });
+            // 获取画布尺寸
+            const graphContainer = flowGraph.container;
+            const viewWidth = graphContainer.clientWidth;
+            const viewHeight = graphContainer.clientHeight;
+
+            // 计算合适的缩放比例，确保所有内容可见
+            const scaleX = viewWidth / (contentWidth + 100);
+            const scaleY = viewHeight / (contentHeight + 100);
+            const scale = Math.min(scaleX, scaleY, 0.8);
+            const clampedScale = Math.max(scale, 0.05);
+
+            // 设置缩放
+            flowGraph.zoomTo(clampedScale);
+
+            // 计算中心点：让面板顶部有 50px 的边距
+            const centerX = minX + contentWidth / 2;
+            const centerY = minY + 50 / clampedScale;
+
+            // 将视图中心点放在面板顶部附近
+            flowGraph.centerPoint(centerX, centerY);
           }
-        }, 150);
+        }, 200);
       }
     };
     
@@ -1281,33 +1303,8 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
           const rows = Math.ceil(sortedContents.length / cols);
           const estimatedPanelHeight = 50 + rows * (maxNodeHeight + 12) + 20;
 
-          // 将面板放在流程图下方，不与节点重叠
-          // 先尝试放在底部
-          let panelY = maxY + 40;
-
-          // 检测面板是否会与任何节点重叠，如果重叠则往下移
-          const checkOverlap = (testY: number): boolean => {
-            const panelBottom = testY + estimatedPanelHeight;
-            const panelLeft = panelX;
-            const panelRight = panelX + panelWidth;
-
-            for (const node of nodes) {
-              const bbox = node.getBBox();
-              // 检查水平方向是否有重叠
-              if (bbox.x + bbox.width > panelLeft && bbox.x < panelRight) {
-                // 检查垂直方向是否有重叠
-                if (bbox.y + bbox.height > testY && bbox.y < panelBottom) {
-                  return true;
-                }
-              }
-            }
-            return false;
-          };
-
-          // 如果有重叠，继续往下找合适位置
-          while (checkOverlap(panelY)) {
-            panelY += 50;
-          }
+          // 将面板放在流程图上方
+          const panelY = minY - estimatedPanelHeight - 20;
 
           const panelId = `content-panel-${Date.now()}`;
           flowGraph.addNode({

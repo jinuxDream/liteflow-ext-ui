@@ -132,7 +132,6 @@ const DataFlowView: React.FC<DataFlowViewProps> = ({ nodes, onNodeClick, onField
           rowKey="fieldName"
           pagination={false}
           size="small"
-          scroll={{ x: 'max-content' }}
           className={styles.matrixTable}
           rowClassName={(record) => selectedField === record.fieldName ? styles.highlightRow : ''}
         />
