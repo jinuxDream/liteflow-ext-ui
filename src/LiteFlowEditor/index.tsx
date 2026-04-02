@@ -1303,8 +1303,8 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
           const rows = Math.ceil(sortedContents.length / cols);
           const estimatedPanelHeight = 50 + rows * (maxNodeHeight + 12) + 20;
 
-          // 将面板放在流程图上方
-          const panelY = minY - estimatedPanelHeight - 20;
+          // 将面板放在流程图上方，间距10px
+          const panelY = minY - estimatedPanelHeight - 10;
 
           const panelId = `content-panel-${Date.now()}`;
           flowGraph.addNode({
@@ -1361,15 +1361,27 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
             }
           });
 
-          // 只在第一次切换视图时调整画布缩放
-          if (!hasZoomedToFitRef.current) {
-            hasZoomedToFitRef.current = true;
-            setTimeout(() => {
-              if (flowGraph) {
-                flowGraph.zoomToFit({ minScale: 0.05, maxScale: 0.8 });
-              }
-            }, 150);
-          }
+          // 调整画布视口，确保面板和流程图都可见
+          setTimeout(() => {
+            if (flowGraph) {
+              // 计算需要的总高度（面板 + 连线间距 + 流程图）
+              const totalContentHeight = (maxY - minY) + estimatedPanelHeight + 20;
+              // 计算缩放比例
+              const viewportHeight = flowGraph.getGraphArea().height;
+              const contentWidth = maxX - minX + 100;
+              const viewportWidth = flowGraph.getGraphArea().width;
+
+              const scaleY = viewportHeight / totalContentHeight;
+              const scaleX = viewportWidth / contentWidth;
+              const scale = Math.min(scaleY, scaleX, 1);
+
+              // 计算中心点，让面板和流程图居中
+              const centerY = panelY + (totalContentHeight / 2);
+              const centerX = minX + (maxX - minX) / 2;
+
+              flowGraph.zoomTo(scale, { center: { x: centerX, y: centerY } });
+            }
+          }, 150);
         }
       });
       flowGraph.on('node:showParamsChanged', (args: any) => {

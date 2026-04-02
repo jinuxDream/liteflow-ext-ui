@@ -378,6 +378,7 @@
 .paramDirection {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .directionTag {
@@ -432,8 +433,8 @@
   line-height: 1.4;
   word-break: break-all;
   white-space: normal;
-  flex: 1;
-  min-width: 0;
+  flex: 1 1 auto;
+  min-width: 150px;
 }
 
 .accessRuleBox {
