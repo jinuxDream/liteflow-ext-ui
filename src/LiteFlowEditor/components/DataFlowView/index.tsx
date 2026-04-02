@@ -74,24 +74,34 @@ const DataFlowView: React.FC<DataFlowViewProps> = ({ nodes, onNodeClick, onField
     // 生成表头
     const columns = [
       {
-        title: '字段',
+        title: '上下文',
         dataIndex: 'fieldName',
         key: 'fieldName',
         fixed: 'left' as const,
-        width: 120,
-        render: (text: string, record: ContextField) => (
-          <div
-            className={`${styles.fieldNameCell} ${selectedField === text ? styles.selected : ''}`}
-            onClick={() => highlightField(text)}
-          >
-            {record.firstSourceNodeId === null ? (
-              <Tag color="purple" style={{ marginRight: 4 }}>入</Tag>
-            ) : (
-              <Tag color="green" style={{ marginRight: 4 }}>出</Tag>
-            )}
-            <span>{text}</span>
-          </div>
-        ),
+        width: 140,
+        render: (text: string, record: ContextField) => {
+          // 判断字段类型：入参 > 过程 > 出参
+          let tagColor = 'cyan';
+          let tagText = '过程';
+
+          if (record.isInput) {
+            tagColor = 'purple';
+            tagText = '入参';
+          } else if (record.isOutput) {
+            tagColor = 'green';
+            tagText = '出参';
+          }
+
+          return (
+            <div
+              className={`${styles.fieldNameCell} ${selectedField === text ? styles.selected : ''}`}
+              onClick={() => highlightField(text)}
+            >
+              <Tag color={tagColor} style={{ marginRight: 4 }}>{tagText}</Tag>
+              <span>{text}</span>
+            </div>
+          );
+        },
       },
       ...nodeDataFlows.map(node => ({
         title: (
@@ -146,8 +156,20 @@ const DataFlowView: React.FC<DataFlowViewProps> = ({ nodes, onNodeClick, onField
         <span>首次写入</span>
       </span>
       <span className={styles.legendItem}>
-        <Tag color="purple" style={{ margin: 0 }}>入</Tag>
+        <span className={`${styles.cellBase} ${styles.cellReadWrite}`}>R/W</span>
+        <span>既读又写</span>
+      </span>
+      <span className={styles.legendItem}>
+        <Tag color="purple" style={{ margin: 0 }}>入参</Tag>
         <span>接口输入</span>
+      </span>
+      <span className={styles.legendItem}>
+        <Tag color="cyan" style={{ margin: 0 }}>过程</Tag>
+        <span>中间流转</span>
+      </span>
+      <span className={styles.legendItem}>
+        <Tag color="green" style={{ margin: 0 }}>出参</Tag>
+        <span>最终输出</span>
       </span>
     </div>
   );

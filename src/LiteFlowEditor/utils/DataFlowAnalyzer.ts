@@ -19,6 +19,12 @@ export interface FieldInfo {
  * 上下文字段（增强版）
  */
 export interface ContextField extends FieldInfo {
+  /** 是否是入参（第一个节点接收的参数） */
+  isInput: boolean;
+  /** 是否是出参（最后一个节点产出且没有被后续消费） */
+  isOutput: boolean;
+  /** 是否是过程变量（中间流转） */
+  isProcess: boolean;
   /** 首次写入该字段的节点ID */
   firstSourceNodeId: string | null;
   /** 写入该字段的节点ID列表 */
@@ -114,6 +120,7 @@ export class DataFlowAnalyzer {
 
   /**
    * 收集节点数据流
+   * 包含接口节点的输入输出参数
    */
   private static collectNodeDataFlows(nodes: Array<{
     id: string;
@@ -121,11 +128,53 @@ export class DataFlowAnalyzer {
     inputParams?: any[];
     outputParams?: any[];
   }>): NodeDataFlow[] {
-    return nodes
-      .filter(node => node.id !== 'interface-info') // 排除接口节点
-      .map(node => {
-        const nodeIndex = getNodeIndex(node.id) || 999;
-        return {
+    const nodeDataFlows: NodeDataFlow[] = [];
+    // 记录接口节点（用于添加虚拟的接口节点）
+    let interfaceInputNode: NodeDataFlow | null = null;
+    let interfaceOutputNode: NodeDataFlow | null = null;
+
+    // 按节点顺序遍历
+    nodes.forEach(node => {
+      const nodeIndex = getNodeIndex(node.id) || 999;
+
+      if (node.id === 'interface-info') {
+        // 接口信息节点：提取接口的输入输出作为独立的"接口节点"
+        const inputs = (node.inputParams || []).map(p => ({
+          fieldName: p.fieldName,
+          fieldType: p.fieldType || 'Object',
+          description: p.description || '',
+          required: p.required || false,
+        }));
+        const outputs = (node.outputParams || []).map(p => ({
+          fieldName: p.fieldName,
+          fieldType: p.fieldType || 'Object',
+          description: p.description || '',
+          required: p.required || false,
+        }));
+
+        if (inputs.length > 0) {
+          // 接口入参节点：写入入参字段到上下文
+          interfaceInputNode = {
+            nodeId: 'interface-input',
+            nodeName: '接口入参',
+            nodeIndex: -2,  // 最前面
+            reads: [],
+            writes: inputs,
+          };
+        }
+
+        if (outputs.length > 0) {
+          // 接口出参节点：读取出参字段（作为最终输出）
+          interfaceOutputNode = {
+            nodeId: 'interface-output',
+            nodeName: '接口出参',
+            nodeIndex: 999,  // 最后面
+            reads: outputs,
+            writes: [],
+          };
+        }
+      } else {
+        nodeDataFlows.push({
           nodeId: node.id,
           nodeName: node.name,
           nodeIndex,
@@ -141,67 +190,146 @@ export class DataFlowAnalyzer {
             description: p.description || '',
             required: p.required || false,
           })),
-        };
-      })
-      .sort((a, b) => a.nodeIndex - b.nodeIndex);
+        });
+      }
+    });
+
+    // 将接口节点插入到适当位置
+    if (interfaceInputNode) {
+      nodeDataFlows.unshift(interfaceInputNode);
+    }
+    if (interfaceOutputNode) {
+      nodeDataFlows.push(interfaceOutputNode);
+    }
+
+    return nodeDataFlows.sort((a, b) => a.nodeIndex - b.nodeIndex);
   }
 
   /**
    * 构建上下文字段集合（去重合并）
-   * 排序规则：先按 入/出 分类（入在前），同类内按最先使用节点顺序
+   * 入参：接口入参节点写入的字段
+   * 出参：接口出参节点读取的字段
+   * 过程：节点间流转的中间变量
    */
   private static buildContextFields(nodeDataFlows: NodeDataFlow[]): ContextField[] {
     const fieldMap = new Map<string, ContextField>();
-    // 记录字段首次使用的节点索引（用于排序）
+    // 记录字段首次出现的节点索引（用于排序）
     const fieldFirstUsed = new Map<string, number>();
 
-    // 按节点顺序遍历
-    nodeDataFlows.forEach(node => {
-      // 处理输出参数（写入）
-      node.writes.forEach(param => {
-        const existing = fieldMap.get(param.fieldName);
-        if (existing) {
-          existing.sourceNodeIds.push(node.nodeId);
-        } else {
-          fieldMap.set(param.fieldName, {
-            ...param,
-            firstSourceNodeId: node.nodeId,
-            sourceNodeIds: [node.nodeId],
-            consumerNodeIds: [],
-          });
-          // 记录首次使用节点索引（写入即首次使用）
-          fieldFirstUsed.set(param.fieldName, node.nodeIndex);
-        }
+    // 提取接口入参和出参
+    const interfaceInputNode = nodeDataFlows.find(n => n.nodeId === 'interface-input');
+    const interfaceOutputNode = nodeDataFlows.find(n => n.nodeId === 'interface-output');
+    const interfaceInputFields = new Map<string, FieldInfo>();
+    const interfaceOutputFields = new Map<string, FieldInfo>();
+
+    // 记录接口入参（节点写入的字段）
+    interfaceInputNode?.writes.forEach(w => {
+      interfaceInputFields.set(w.fieldName, w);
+    });
+    // 记录接口出参（节点读取的字段）
+    interfaceOutputNode?.reads.forEach(r => {
+      interfaceOutputFields.set(r.fieldName, r);
+    });
+
+    // 先添加接口入参到字段列表
+    interfaceInputFields.forEach((param, fieldName) => {
+      fieldMap.set(fieldName, {
+        ...param,
+        isInput: true,
+        isOutput: false,
+        isProcess: false,
+        firstSourceNodeId: null,
+        sourceNodeIds: [],
+        consumerNodeIds: [],
       });
+      fieldFirstUsed.set(fieldName, -2);
+    });
+
+    // 添加接口出参到字段列表（可能是入参也可能是出参）
+    interfaceOutputFields.forEach((param, fieldName) => {
+      if (!fieldMap.has(fieldName)) {
+        fieldMap.set(fieldName, {
+          ...param,
+          isInput: false,
+          isOutput: true,
+          isProcess: false,
+          firstSourceNodeId: null,
+          sourceNodeIds: [],
+          consumerNodeIds: [],
+        });
+        fieldFirstUsed.set(fieldName, 999);
+      } else {
+        // 既是入参又是出参 -> 过程
+        const existing = fieldMap.get(fieldName)!;
+        existing.isOutput = true;
+        existing.isInput = false;
+        existing.isProcess = true;
+      }
+    });
+
+    // 按节点顺序遍历（排除接口虚拟节点）
+    nodeDataFlows.forEach(node => {
+      if (node.nodeId === 'interface-input' || node.nodeId === 'interface-output') {
+        return;
+      }
 
       // 处理输入参数（读取）
       node.reads.forEach(param => {
-        const existing = fieldMap.get(param.fieldName);
-        if (existing) {
-          if (!existing.consumerNodeIds.includes(node.nodeId)) {
-            existing.consumerNodeIds.push(node.nodeId);
-          }
-        } else {
-          // 字段在读取之前没有被写入（可能是接口输入参数）
+        if (!fieldMap.has(param.fieldName)) {
+          // 不是接口入参也不是接口出参 -> 过程变量
           fieldMap.set(param.fieldName, {
             ...param,
+            isInput: false,
+            isOutput: false,
+            isProcess: true,
             firstSourceNodeId: null,
             sourceNodeIds: [],
             consumerNodeIds: [node.nodeId],
           });
-          // 记录首次使用节点索引（读取即首次使用）
-          fieldFirstUsed.set(param.fieldName, node.nodeIndex);
+          if (!fieldFirstUsed.has(param.fieldName)) {
+            fieldFirstUsed.set(param.fieldName, node.nodeIndex);
+          }
+        } else {
+          const existing = fieldMap.get(param.fieldName)!;
+          if (!existing.consumerNodeIds.includes(node.nodeId)) {
+            existing.consumerNodeIds.push(node.nodeId);
+          }
+        }
+      });
+
+      // 处理输出参数（写入）
+      node.writes.forEach(param => {
+        const existing = fieldMap.get(param.fieldName);
+        if (existing) {
+          if (!existing.sourceNodeIds.includes(node.nodeId)) {
+            existing.sourceNodeIds.push(node.nodeId);
+          }
+          if (existing.firstSourceNodeId === null) {
+            existing.firstSourceNodeId = node.nodeId;
+          }
+        } else {
+          // 不是接口入参也不是接口出参 -> 过程变量
+          fieldMap.set(param.fieldName, {
+            ...param,
+            isInput: false,
+            isOutput: false,
+            isProcess: true,
+            firstSourceNodeId: node.nodeId,
+            sourceNodeIds: [node.nodeId],
+            consumerNodeIds: [],
+          });
+          if (!fieldFirstUsed.has(param.fieldName)) {
+            fieldFirstUsed.set(param.fieldName, node.nodeIndex);
+          }
         }
       });
     });
 
-    // 排序：先按 入/出 分类（入在前），同类内按最先使用节点顺序
+    // 排序：入参 > 过程 > 出参，同类内按首次使用节点顺序
     return Array.from(fieldMap.values()).sort((a, b) => {
-      // 入/出 分类：入(firstSourceNodeId === null)在前，出在后
-      if (a.firstSourceNodeId === null && b.firstSourceNodeId !== null) return -1;
-      if (a.firstSourceNodeId !== null && b.firstSourceNodeId === null) return 1;
-
-      // 同类内按首次使用节点顺序
+      if (a.isInput !== b.isInput) return a.isInput ? -1 : 1;
+      if (a.isProcess !== b.isProcess) return a.isProcess ? -1 : 1;
+      if (a.isOutput !== b.isOutput) return a.isOutput ? -1 : 1;
       const indexA = fieldFirstUsed.get(a.fieldName) || 999;
       const indexB = fieldFirstUsed.get(b.fieldName) || 999;
       return indexA - indexB;
