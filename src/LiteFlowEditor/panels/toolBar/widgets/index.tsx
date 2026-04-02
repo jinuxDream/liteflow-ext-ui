@@ -15,12 +15,15 @@ import ShowParams from './showParams';
 import ShowSteps from './showSteps';
 import ShowDependencies from './showDependencies';
 import ShowAll from './showAll';
+import InterfaceSelector from './interfaceSelector';
+import ViewModeSwitch from './viewModeSwitch';
 
 interface IProps {
   flowGraph: Graph;
 }
 
 const tools: React.FC<IProps>[][] = [
+  [InterfaceSelector, ViewModeSwitch],
   [Zoom],
   [FitWindow, Undo, Redo, Selection, Save, View, Fullscreen, ShowParams, ShowSteps, ShowDependencies, ShowAll],
 ];

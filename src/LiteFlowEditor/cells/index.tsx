@@ -34,6 +34,7 @@ import {NodeBadge, NodeToolBar, NodeView, NodeViewWrapper} from '../components';
 import ParamNode from '../components/ParamNode';
 import StepsNode from '../components/StepsNode';
 import DependenciesNode from '../components/DependenciesNode';
+import ContentPanelNode from '../components/ContentPanelNode';
 
 /** 注册自定义节点到AntV X6 */
 [
@@ -71,24 +72,13 @@ import DependenciesNode from '../components/DependenciesNode';
     width: NODE_WIDTH,
     height: NODE_HEIGHT,
     attrs: {
-      label: {
-        refX: 0.5,
-        refY: '100%',
-        refY2: 20,
-        text: label,
-        fill: '#333',
-        fontSize: 14,
-        textAnchor: 'middle',
-        textVerticalAnchor: 'middle',
-        textWrap: {
-          width: 120,
-          height: 80,
-          ellipsis: true,
-          breakWord: true,
-        },
+      body: {
+        refWidth: '100%',
+        refHeight: '100%',
+        fill: 'transparent',
+        stroke: 'none',
       },
     },
-    ...node,
   });
 });
 
@@ -106,10 +96,13 @@ register({
     );
   },
   width: 400,
+  height: 200,
   attrs: {
     body: {
       refWidth: '100%',
       refHeight: '100%',
+      fill: '#ffffff',
+      stroke: '#bfbfbf',
     }
   }
 });
@@ -122,15 +115,19 @@ register({
     return (
       <StepsNode
         nodeName={data?.nodeName || ''}
+        nodeDescription={data?.nodeDescription || ''}
         steps={data?.steps || []}
       />
     );
   },
   width: 400,
+  height: 200,
   attrs: {
     body: {
       refWidth: '100%',
       refHeight: '100%',
+      fill: '#ffffff',
+      stroke: '#bfbfbf',
     }
   }
 });
@@ -148,10 +145,38 @@ register({
     );
   },
   width: 400,
+  height: 200,
   attrs: {
     body: {
       refWidth: '100%',
       refHeight: '100%',
+      fill: '#ffffff',
+      stroke: '#bfbfbf',
+    }
+  }
+});
+
+register({
+  shape: 'content-panel-node',
+  inherit: 'react-shape',
+  component(props: any) {
+    const data = props.node.getData();
+    return (
+      <ContentPanelNode
+        nodes={data?.nodes || []}
+        viewMode={data?.viewMode || ''}
+        onNodeHover={data?.onNodeHover}
+        hoveredNodeId={data?.hoveredNodeId}
+      />
+    );
+  },
+  width: 800,
+  attrs: {
+    body: {
+      refWidth: '100%',
+      refHeight: '100%',
+      fill: 'transparent',
+      stroke: 'none',
     }
   }
 });

@@ -210,6 +210,7 @@ const createFlowChart = (
       pageVisible: false,
       pageBreak: false,
       pannable: true,
+      padding: 100,
     }),
   );
   // 小地图：https://x6.antv.antgroup.com/tutorial/plugins/minimap

@@ -45,6 +45,8 @@ const registerEvents = (flowGraph: Graph, showEdgeAddButton: boolean = true): vo
     if (model) {
       flowGraph.trigger('model:select', model);
     }
+    // 触发显示右侧面板
+    flowGraph.trigger('panel:show');
   });
   flowGraph.on('blank:mousedown', () => {
     flowGraph.cleanSelection();

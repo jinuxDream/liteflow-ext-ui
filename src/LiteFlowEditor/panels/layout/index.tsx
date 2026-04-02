@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Graph } from '@antv/x6';
 import { SplitBox } from '@antv/x6-react-components';
-import { FullscreenOutlined, FullscreenExitOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { FullscreenOutlined, FullscreenExitOutlined, MenuFoldOutlined, MenuUnfoldOutlined, RightOutlined } from '@ant-design/icons';
 import { useGraphWrapper } from '../../hooks';
+import { usePanel } from '../../context/PanelContext';
 import '@antv/x6-react-components/es/split-box/style/index.css';
 import styles from './index.module.less';
 
@@ -24,9 +25,9 @@ const Layout: React.FC<IProps> = (props) => {
   const { flowGraph, SideBar, ToolBar, SettingBar, widgets } = props;
 
   const wrapperRef = useGraphWrapper();
+  const { isPanelVisible, showPanel, togglePanel } = usePanel();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [panelWidth, setPanelWidth] = useState(0);
-  const [isPanelVisible, setIsPanelVisible] = useState(true);
 
   const handleResize = () => {
     if (flowGraph && wrapperRef && wrapperRef.current) {
@@ -38,10 +39,6 @@ const Layout: React.FC<IProps> = (props) => {
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
-  };
-  
-  const togglePanel = () => {
-    setIsPanelVisible(!isPanelVisible);
   };
 
   React.useEffect(() => {

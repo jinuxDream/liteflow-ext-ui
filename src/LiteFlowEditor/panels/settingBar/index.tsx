@@ -11,8 +11,6 @@ import ELNode from '../../model/node';
 import NodeOperator from '../../model/el/node-operator';
 import styles from './index.module.less';
 
-const { TabPane } = Tabs;
-
 interface IProps {
   flowGraph: Graph;
 }
@@ -66,16 +64,22 @@ const SettingBar: React.FC<IProps> = (props) => {
     }
   }
 
+  const items = [
+    {
+      key: 'properties',
+      label: '属性',
+      children: propertiesPanel,
+    },
+    {
+      key: 'outline',
+      label: '结构树',
+      children: <Outline flowGraph={flowGraph} />,
+    },
+  ];
+
   return (
     <div className={styles.liteflowEditorSettingBarContainer}>
-      <Tabs activeKey={activeKey} onChange={setActiveKey}>
-        <TabPane tab={'属性'} key={'properties'}>
-          {propertiesPanel}
-        </TabPane>
-        <TabPane tab={'结构树'} key={'outline'}>
-          <Outline flowGraph={flowGraph} />
-        </TabPane>
-      </Tabs>
+      <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
     </div>
   );
 };

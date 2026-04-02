@@ -1,0 +1,104 @@
+.interfaceSelector {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 0 8px;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: #40a9ff;
+  }
+
+  .selectorIcon {
+    color: #1890ff;
+    margin-right: 8px;
+    font-size: 14px;
+  }
+
+  .selectorLabel {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+    margin-right: 8px;
+    padding-right: 8px;
+    border-right: 1px solid #e8e8e8;
+  }
+
+  :global {
+    .ant-select {
+      .ant-select-selector {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+
+        .ant-select-selection-item {
+          font-size: 13px;
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      .ant-select-arrow {
+        right: 0;
+      }
+    }
+  }
+}
+
+.interfaceOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .methodTag {
+    font-size: 10px;
+    padding: 0 4px;
+    line-height: 16px;
+    border-radius: 2px;
+  }
+
+  .interfaceName {
+    font-weight: 500;
+    color: #333;
+    font-size: 13px;
+  }
+}
+
+.interfaceDropdown {
+  .dropdownOption {
+    padding: 4px 0;
+
+    .optionHeader {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+
+      .optionName {
+        font-weight: 500;
+        color: #333;
+      }
+    }
+
+    .optionPath {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 2px;
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      background: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    .optionDesc {
+      font-size: 11px;
+      color: #999;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 280px;
+    }
+  }
+}

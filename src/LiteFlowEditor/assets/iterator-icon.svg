@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="10" fill="#EFA13B" stroke="#EFA13B" stroke-width="1.5"/>
-    <text x="12" y="16" font-size="14" font-weight="bold" fill="white" text-anchor="middle" font-family="Arial">↔</text>
+<svg width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <rect x="2" y="4" width="20" height="16" rx="2" fill="#faad14" stroke="#faad14" stroke-width="1"/>
+    <path d="M12 7 L12 17 M8 10 L12 7 L16 10" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 14 L12 17 L16 14" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

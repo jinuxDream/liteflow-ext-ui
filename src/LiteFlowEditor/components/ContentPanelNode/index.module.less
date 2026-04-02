@@ -1,0 +1,232 @@
+.contentPanelNode {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+  min-width: 660px;
+  width: 100%;
+}
+
+.panelTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1890ff;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.panelContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.nodeCard {
+  display: flex;
+  gap: 10px;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 10px 12px;
+  min-width: 200px;
+  max-width: 280px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover,
+  &.hovered {
+    background: #e6f7ff;
+    border-color: #1890ff;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+  }
+}
+
+// 接口信息节点样式 - 独占一行，特殊背景
+.interfaceCard {
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+  border: 2px solid #1890ff;
+  padding: 12px 16px;
+  flex-direction: row;
+  align-items: flex-start;
+
+  &:hover,
+  &.hovered {
+    background: linear-gradient(135deg, #bae7ff 0%, #91d5ff 100%);
+    border-color: #1890ff;
+    box-shadow: 0 4px 12px rgba(24, 144, 255, 0.25);
+  }
+}
+
+.interfaceIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  color: #fff;
+  font-size: 16px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.nodeIndex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nodeInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.nodeName {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+  white-space: normal;
+  word-break: break-all;
+}
+
+.interfaceCard .nodeName {
+  font-size: 14px;
+  color: #1890ff;
+}
+
+.nodeDesc {
+  font-size: 11px;
+  color: #8c8c8c;
+  margin-bottom: 6px;
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-all;
+}
+
+.contentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summaryContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summaryText {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-all;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #8c8c8c;
+}
+
+.sectionIcon {
+  font-size: 11px;
+  color: #1890ff;
+}
+
+.stepList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stepItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.stepNum {
+  color: #1890ff;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.stepText {
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.moreText {
+  font-size: 10px;
+  color: #999;
+}
+
+.paramSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paramGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.paramLabel {
+  font-size: 10px;
+  color: #8c8c8c;
+  flex-shrink: 0;
+}
+
+.paramTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.paramTag {
+  font-size: 9px;
+  padding: 0 4px;
+  line-height: 16px;
+  margin: 0;
+  border-radius: 2px;
+}
+
+.depTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.depTag {
+  font-size: 9px;
+  padding: 0 4px;
+  line-height: 16px;
+  margin: 0;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}

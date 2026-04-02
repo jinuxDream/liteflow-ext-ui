@@ -2,6 +2,7 @@ import React from 'react';
 import { Node } from '@antv/x6';
 import NodeView from './index';
 import { useShowParams } from '../../context/ShowParamsContext';
+import styles from './NodeViewWrapper.module.less';
 
 interface IProps {
   icon: string;
@@ -11,12 +12,14 @@ interface IProps {
 
 const NodeViewWrapper: React.FC<IProps> = (props) => {
   const { showParams } = useShowParams();
-  
+
   return (
-    <NodeView 
-      {...props} 
-      showParams={showParams}
-    />
+    <div className={styles.nodeViewContainer}>
+      <NodeView
+        {...props}
+        showParams={showParams}
+      />
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
 /** 常量 */
-export const NODE_WIDTH = 50; // 节点宽度
-export const NODE_HEIGHT = 50; // 节点高度
+export const NODE_WIDTH = 120; // 节点宽度
+export const NODE_HEIGHT = 120; // 节点高度
 export const MIN_ZOOM = 0.1;
 export const MAX_ZOOM = 3.0;
 export const ZOOM_STEP = 0.1;

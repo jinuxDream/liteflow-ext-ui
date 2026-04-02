@@ -1,0 +1,81 @@
+.viewModeSwitch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+
+  .viewLabel {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+    padding-right: 8px;
+    border-right: 1px solid #e8e8e8;
+    white-space: nowrap;
+  }
+
+  :global {
+    .ant-radio-group {
+      display: flex;
+      border-radius: 4px;
+      overflow: hidden;
+
+      .ant-radio-button-wrapper {
+        height: 28px;
+        line-height: 26px;
+        padding: 0 12px;
+        border-radius: 0;
+        display: flex;
+        align-items: center;
+
+        &:first-child {
+          border-radius: 4px 0 0 4px;
+        }
+
+        &:last-child {
+          border-radius: 0 4px 4px 0;
+        }
+
+        &.ant-radio-button-wrapper-checked {
+          background: #1890ff;
+          border-color: #1890ff;
+        }
+      }
+    }
+  }
+
+  .optionContent {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .optionLabel {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .refreshBtn {
+    height: 28px;
+    width: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+}
+
+// 窄屏幕下只显示图标
+@media (max-width: 1200px) {
+  .viewModeSwitch {
+    :global {
+      .ant-radio-button-wrapper {
+        padding: 0 10px;
+      }
+    }
+
+    .optionLabel {
+      display: none;
+    }
+  }
+}

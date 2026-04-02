@@ -9,22 +9,28 @@ interface IStep {
 
 interface IProps {
   nodeName: string;
+  nodeDescription?: string;
   steps: IStep[];
 }
 
-const StepsNode: React.FC<IProps> = ({ nodeName, steps }) => {
+const StepsNode: React.FC<IProps> = ({ nodeName, nodeDescription, steps }) => {
   const hasSteps = steps?.length > 0;
 
   return (
-    <div 
+    <div
       className={styles.stepsNode}
       onDoubleClick={(e) => e.stopPropagation()}
     >
       <div className={styles.panelHeader}>
         <OrderedListOutlined className={styles.headerIcon} />
-        <span className={styles.headerTitle}>执行步骤-{nodeName}</span>
+        <div className={styles.headerText}>
+          <span className={styles.headerTitle}>执行步骤-{nodeName}</span>
+          {nodeDescription && (
+            <span className={styles.headerSubtitle}>{nodeDescription}</span>
+          )}
+        </div>
       </div>
-      
+
       {hasSteps && (
         <div className={styles.panelContent}>
           <div className={styles.stepsList}>
@@ -37,7 +43,7 @@ const StepsNode: React.FC<IProps> = ({ nodeName, steps }) => {
           </div>
         </div>
       )}
-      
+
       {!hasSteps && (
         <div className={styles.panelContent}>
           <div className={styles.noSteps}>该节点没有执行步骤</div>

@@ -10,6 +10,7 @@ interface IGraphContext {
   graph: Graph;
   graphWrapper: RefObject<HTMLDivElement>;
   enableEdit?: boolean;
+  showPanel?: () => void;
 }
 
 const defaultValue: IGraphContext = {} as any;
