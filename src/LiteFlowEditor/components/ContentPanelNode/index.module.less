@@ -6,6 +6,10 @@
   backdrop-filter: blur(8px);
   min-width: 660px;
   width: 100%;
+  max-height: 450px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .panelTitle {
@@ -15,12 +19,16 @@
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
 }
 
 .panelContent {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .nodeCard {
