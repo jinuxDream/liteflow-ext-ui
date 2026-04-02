@@ -78,11 +78,11 @@ const ContentPanelNode: React.FC<ContentPanelNodeProps> = ({
         return node.description && node.description.length > 0;
       case 'logic':
         return node.steps && node.steps.length > 0;
-      case 'dataflow':
-        return (node.inputParams && node.inputParams.length > 0) ||
-               (node.outputParams && node.outputParams.length > 0);
       case 'dependency':
         return node.dependencies && node.dependencies.length > 0;
+      case 'dataflow':
+        // 数据流视图显示所有节点（包括没有参数的节点）
+        return true;
       default:
         return false;
     }

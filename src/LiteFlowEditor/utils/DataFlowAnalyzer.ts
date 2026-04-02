@@ -209,7 +209,7 @@ export class DataFlowAnalyzer {
    * 构建上下文字段集合（去重合并）
    * 入参：接口入参节点写入的字段
    * 出参：接口出参节点读取的字段
-   * 过程：节点间流转的中间变量
+   * 过程：只在节点间流转的中间变量（不是接口入参也不是接口出参）
    */
   private static buildContextFields(nodeDataFlows: NodeDataFlow[]): ContextField[] {
     const fieldMap = new Map<string, ContextField>();
@@ -222,11 +222,11 @@ export class DataFlowAnalyzer {
     const interfaceInputFields = new Map<string, FieldInfo>();
     const interfaceOutputFields = new Map<string, FieldInfo>();
 
-    // 记录接口入参（节点写入的字段）
+    // 记录接口入参（虚拟节点写入的字段，代表外部传入）
     interfaceInputNode?.writes.forEach(w => {
       interfaceInputFields.set(w.fieldName, w);
     });
-    // 记录接口出参（节点读取的字段）
+    // 记录接口出参（虚拟节点读取的字段，代表返回给外部）
     interfaceOutputNode?.reads.forEach(r => {
       interfaceOutputFields.set(r.fieldName, r);
     });
@@ -238,16 +238,17 @@ export class DataFlowAnalyzer {
         isInput: true,
         isOutput: false,
         isProcess: false,
-        firstSourceNodeId: null,
-        sourceNodeIds: [],
+        firstSourceNodeId: 'interface-input',
+        sourceNodeIds: ['interface-input'],
         consumerNodeIds: [],
       });
       fieldFirstUsed.set(fieldName, -2);
     });
 
-    // 添加接口出参到字段列表（可能是入参也可能是出参）
+    // 添加接口出参到字段列表
     interfaceOutputFields.forEach((param, fieldName) => {
       if (!fieldMap.has(fieldName)) {
+        // 只是出参（不是入参）
         fieldMap.set(fieldName, {
           ...param,
           isInput: false,
@@ -255,15 +256,13 @@ export class DataFlowAnalyzer {
           isProcess: false,
           firstSourceNodeId: null,
           sourceNodeIds: [],
-          consumerNodeIds: [],
+          consumerNodeIds: ['interface-output'],
         });
         fieldFirstUsed.set(fieldName, 999);
       } else {
-        // 既是入参又是出参 -> 过程
+        // 既是入参又是出参 -> 保持入参标记（因为它确实是接口入参）
         const existing = fieldMap.get(fieldName)!;
-        existing.isOutput = true;
-        existing.isInput = false;
-        existing.isProcess = true;
+        existing.consumerNodeIds.push('interface-output');
       }
     });
 

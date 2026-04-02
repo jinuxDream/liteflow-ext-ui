@@ -226,7 +226,7 @@
 // 详情弹出层样式 - 与属性面板完全一致
 .detailPopup {
   padding: 8px;
-  width: 400px;
+  width: 540px;
   max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
@@ -363,16 +363,16 @@
 }
 
 .paramRow {
-  display: grid;
-  grid-template-columns: auto 1fr auto auto 2fr;
-  gap: 3px;
-  align-items: center;
-  padding: 3px 5px;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 4px 6px;
   background: #ffffff;
   border-radius: 3px;
   font-size: 12px;
   overflow: hidden;
   min-width: 0;
+  flex-wrap: wrap;
 }
 
 .paramDirection {
@@ -392,10 +392,10 @@
   font-weight: 600;
   color: #000000;
   font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
+  word-break: break-all;
+  white-space: normal;
+  min-width: 80px;
+  max-width: 200px;
 }
 
 .paramType {
@@ -431,11 +431,8 @@
   font-size: 12px;
   line-height: 1.4;
   word-break: break-all;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: normal;
+  flex: 1;
   min-width: 0;
 }
 
@@ -546,8 +543,8 @@
       border-radius: 6px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
       border: 1px solid #e8e8e8;
-      width: 420px !important;
-      max-width: 420px !important;
+      width: 560px !important;
+      max-width: 560px !important;
     }
 
     .ant-tooltip-arrow-content {

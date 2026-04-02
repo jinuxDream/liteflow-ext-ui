@@ -58,8 +58,12 @@ const InterfaceInfoPopover: React.FC<IProps> = ({ chainId, visible, position }) 
       title: '字段名',
       dataIndex: 'fieldName',
       key: 'fieldName',
-      width: 100,
-      render: (text: string) => <code style={{ color: '#1890ff', fontSize: 12 }}>{text}</code>,
+      width: 150,
+      render: (text: string) => (
+        <code style={{ color: '#1890ff', fontSize: 12, wordBreak: 'break-all' }}>
+          {text}
+        </code>
+      ),
     },
     {
       title: '类型',
@@ -72,7 +76,10 @@ const InterfaceInfoPopover: React.FC<IProps> = ({ chainId, visible, position }) 
       title: '描述',
       dataIndex: 'description',
       key: 'description',
-      ellipsis: true,
+      ellipsis: false,
+      render: (text: string) => (
+        <span style={{ wordBreak: 'break-all', fontSize: 12 }}>{text}</span>
+      ),
     },
     {
       title: '必填',
