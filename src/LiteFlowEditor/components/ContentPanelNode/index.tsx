@@ -239,10 +239,17 @@ const ContentPanelNode: React.FC<ContentPanelNodeProps> = ({
 
   // 数据流视图使用新的矩阵视图
   if (viewMode === 'dataflow') {
+    // 统计所有上下文字段（去重）
+    const allFields = new Set<string>();
+    filteredNodes.forEach(node => {
+      node.inputParams?.forEach((p: any) => allFields.add(p.fieldName));
+      node.outputParams?.forEach((p: any) => allFields.add(p.fieldName));
+    });
+
     return (
       <div className={styles.contentPanelNode}>
         <div className={styles.panelTitle}>
-          {getViewModeTitle()} · 上下文字段 {interfaceInfoNode?.inputParams?.length || 0} 个
+          {getViewModeTitle()} · 上下文字段 {allFields.size} 个
         </div>
         <DataFlowView
           nodes={filteredNodes}

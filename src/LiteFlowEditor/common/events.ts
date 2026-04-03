@@ -41,6 +41,10 @@ const registerEvents = (flowGraph: Graph, showEdgeAddButton: boolean = true): vo
   }
   flowGraph.on('node:click', (args) => {
     const { node } = args;
+    // 跳过 content-panel-node 节点，避免点击面板时弹出右侧属性面板
+    if (node.shape === 'content-panel-node') {
+      return;
+    }
     const { model } = node.getData() || {};
     if (model) {
       flowGraph.trigger('model:select', model);
@@ -68,7 +72,11 @@ const registerEvents = (flowGraph: Graph, showEdgeAddButton: boolean = true): vo
       args.edge.attr('line/stroke', '#c1c1c1', { ignore: true });
     }
   });
-  flowGraph.on('node:dblclick', () => {
+  flowGraph.on('node:dblclick', (args) => {
+    // 跳过 content-panel-node 节点
+    if (args.node.shape === 'content-panel-node') {
+      return;
+    }
     flowGraph.trigger('graph:editNode');
   });
   flowGraph.on('blank:contextmenu', (args) => {
@@ -87,6 +95,15 @@ const registerEvents = (flowGraph: Graph, showEdgeAddButton: boolean = true): vo
       e: { clientX, clientY },
       node,
     } = args;
+    // 跳过 content-panel-node 节点，避免在面板上弹出节点上下文菜单
+    if (node.shape === 'content-panel-node') {
+      flowGraph.trigger('graph:showContextMenu', {
+        x: clientX,
+        y: clientY,
+        scene: 'blank',
+      });
+      return;
+    }
     // NOTE: if the clicked node is not in the selected nodes, then clear selection
     if (!flowGraph.getSelectedCells().includes(node)) {
       flowGraph.cleanSelection();

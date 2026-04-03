@@ -9,6 +9,152 @@
   overflow: hidden;
 }
 
+/* 工具栏 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #f0f0f0;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 2px;
+  }
+}
+
+.fieldCount {
+  font-size: 12px;
+  color: #8c8c8c;
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 节点影响分析面板 */
+.nodeImpactPanel {
+  background: #f6f8fa;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.impactHeader {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e8e8e8;
+
+  .nodeName {
+    margin-left: auto;
+    font-weight: 500;
+    color: #1890ff;
+    font-size: 12px;
+  }
+}
+
+.impactSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.summaryItem {
+  color: #666;
+}
+
+.summaryDivider {
+  color: #d9d9d9;
+}
+
+.impactSection {
+  margin-bottom: 10px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sectionIcon {
+  font-size: 12px;
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.fieldName {
+  font-weight: 500;
+  color: #333;
+  min-width: 80px;
+}
+
+.fieldMeta {
+  color: #666;
+  font-size: 10px;
+}
+
+.fieldMetaWarning {
+  color: #faad14;
+  font-size: 10px;
+}
+
+.nodeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.nodeTag {
+  font-size: 10px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.nodeFieldCount {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
 .mainContent {
   flex: 1;
   min-height: 0;
@@ -99,7 +245,28 @@
 
 /* 矩阵视图 */
 .matrixContainer {
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: auto;
+  max-width: 100%;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 4px;
+
+    &:hover {
+      background: #bfbfbf;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
 }
 
 .matrixTable {
@@ -151,7 +318,7 @@
 
 .nodeName {
   font-size: 10px;
-  max-width: 80px;
+  max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -174,8 +341,88 @@
   }
 }
 
+.descriptionCell {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
 .highlightRow {
   background: #e6f7ff !important;
+}
+
+/* 行状态样式 */
+.matrixRow {
+  transition: background-color 0.2s;
+}
+
+/* 必须参数行 - 红色背景 */
+.rowRequired {
+  background: #fff1f0 !important;
+  border-left: 3px solid #ff4d4f;
+
+  &:hover > td {
+    background: #ffccc7 !important;
+  }
+}
+
+/* 可选参数行 - 黄色背景 */
+.rowOptional {
+  background: #fffbe6 !important;
+  border-left: 3px solid #faad14;
+
+  &:hover > td {
+    background: #fff1b8 !important;
+  }
+}
+
+/* 未被消费的行 - 黄色背景 */
+.rowUnused {
+  background: #fffbe6 !important;
+  border-left: 3px solid #faad14;
+
+  &:hover > td {
+    background: #fff1b8 !important;
+  }
+}
+
+/* 缺失字段的行 - 红色背景 */
+.rowMissing {
+  background: #fff1f0 !important;
+  border-left: 3px solid #ff4d4f;
+
+  &:hover > td {
+    background: #ffccc7 !important;
+  }
+}
+
+/* 循环依赖的行 - 紫色背景 */
+.rowCircular {
+  background: #f9f0ff !important;
+  border-left: 3px solid #722ed1;
+
+  &:hover > td {
+    background: #efdbff !important;
+  }
+}
+
+/* 类型不匹配的行 - 橙色背景 */
+.rowTypeMismatch {
+  background: #fff7e6 !important;
+  border-left: 3px solid #fa8c16;
+
+  &:hover > td {
+    background: #ffd591 !important;
+  }
+}
+
+/* 删除标记文本 */
+.deletedText {
+  text-decoration: line-through;
+  color: #999;
 }
 
 /* 矩阵单元格 */
@@ -243,6 +490,20 @@
   gap: 6px;
   font-size: 11px;
   color: #666;
+}
+
+.legendDivider {
+  color: #d9d9d9;
+  margin: 0 4px;
+}
+
+/* 图例色块 */
+.legendColorBox {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  border-left: 3px solid;
 }
 
 /* 空状态 */

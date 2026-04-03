@@ -457,10 +457,15 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
             viewMode: getGlobalViewMode(),
             hoveredNodeId,
             onNodeHover: (nodeId: string | null) => {
-              setHoveredNodeId(nodeId);
               if (nodeId && flowGraph) {
+                // 跳过虚拟节点（interface-input, interface-output, interface-info）
+                if (nodeId === 'interface-input' || nodeId === 'interface-output' || nodeId === 'interface-info') {
+                  return;
+                }
+
                 const targetNode = flowGraph.getCellById(nodeId);
                 if (targetNode) {
+                  // 只高亮节点，不移动视图和触发侧边栏
                   targetNode.setAttrs({
                     body: { strokeWidth: 3, stroke: '#1890ff' }
                   });
@@ -511,53 +516,55 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
           }
         });
 
-        // 更新画布内容区域，确保面板在视口顶部可见
-        setTimeout(() => {
-          if (flowGraph) {
-            // 获取所有节点的边界（包括面板）
-            const allNodes = flowGraph.getNodes();
-            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-            let panelNode = null;
+        // 更新画布内容区域，让面板和流程图都可见
+        // 只在首次创建面板时调整，后续切换不再调整以保持一致的缩放
+        if (!hasZoomedToFitRef.current) {
+          setTimeout(() => {
+            if (flowGraph) {
+              // 获取所有节点的边界（包括面板）
+              const allNodes = flowGraph.getNodes();
+              let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
 
-            allNodes.forEach(node => {
-              const bbox = node.getBBox();
-              minX = Math.min(minX, bbox.x);
-              maxX = Math.max(maxX, bbox.x + bbox.width);
-              minY = Math.min(minY, bbox.y);
-              maxY = Math.max(maxY, bbox.y + bbox.height);
+              allNodes.forEach(node => {
+                const bbox = node.getBBox();
+                minX = Math.min(minX, bbox.x);
+                maxX = Math.max(maxX, bbox.x + bbox.width);
+                minY = Math.min(minY, bbox.y);
+                maxY = Math.max(maxY, bbox.y + bbox.height);
+              });
 
-              // 找到面板节点
-              if (node.id && node.id.startsWith('content-panel-')) {
-                panelNode = node;
-              }
-            });
+              // 获取面板节点
+              const panelNode = allNodes.find(n => n.id && n.id.startsWith('content-panel-'));
+              const panelBbox = panelNode ? panelNode.getBBox() : null;
+              const panelY = panelBbox ? panelBbox.y : minY;
 
-            // 计算内容的宽高
-            const contentWidth = maxX - minX;
-            const contentHeight = maxY - minY;
+              // 计算内容的宽高（包含面板）
+              const contentWidth = maxX - minX;
+              const contentHeight = maxY - panelY;
 
-            // 获取画布尺寸
-            const graphContainer = flowGraph.container;
-            const viewWidth = graphContainer.clientWidth;
-            const viewHeight = graphContainer.clientHeight;
+              // 获取画布尺寸
+              const graphContainer = flowGraph.container;
+              const viewWidth = graphContainer.clientWidth;
+              const viewHeight = graphContainer.clientHeight;
 
-            // 计算合适的缩放比例，确保所有内容可见
-            const scaleX = viewWidth / (contentWidth + 100);
-            const scaleY = viewHeight / (contentHeight + 100);
-            const scale = Math.min(scaleX, scaleY, 0.8);
-            const clampedScale = Math.max(scale, 0.05);
+              // 计算合适的缩放比例，确保所有内容可见，使用固定的最大缩放值
+              const scaleX = viewWidth / (contentWidth + 100);
+              const scaleY = viewHeight / (contentHeight + 100);
+              const scale = Math.min(scaleX, scaleY, 0.8);
+              const clampedScale = Math.max(scale, 0.1);
 
-            // 设置缩放
-            flowGraph.zoomTo(clampedScale);
+              // 设置缩放
+              flowGraph.zoomTo(clampedScale);
 
-            // 计算中心点：让面板顶部有 50px 的边距
-            const centerX = minX + contentWidth / 2;
-            const centerY = minY + 50 / clampedScale;
+              // 计算中心点：面板顶部到流程图底部的中间位置
+              const centerX = minX + contentWidth / 2;
+              const centerY = (panelY + maxY) / 2;
 
-            // 将视图中心点放在面板顶部附近
-            flowGraph.centerPoint(centerX, centerY);
-          }
-        }, 200);
+              // 将视图中心点放在内容中间
+              flowGraph.centerPoint(centerX, centerY);
+            }
+          }, 200);
+        }
       }
     };
     
@@ -1260,9 +1267,19 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
         // 接口信息节点排在最前面（序号1），其他节点按序号排列
         const sortedContents = interfaceInfo ? [interfaceInfo, ...otherNodes] : otherNodes;
 
-        // 如果 viewMode 为空，不创建内容面板
+        // 如果 viewMode 为空，移除面板并返回
         const currentViewMode = getGlobalViewMode();
         if (!currentViewMode) {
+          // 移除旧的内容面板节点和连线
+          if (contentPanelNodeIdRef.current) {
+            const oldNode = flowGraph.getCellById(contentPanelNodeIdRef.current);
+            if (oldNode) oldNode.remove();
+            const oldEdges = flowGraph.getEdges().filter(edge => edge.id.startsWith('content-edge-'));
+            oldEdges.forEach(edge => edge.remove());
+            contentPanelNodeIdRef.current = null;
+          }
+          // 重置缩放标记，以便下次切换视图时重新调整
+          hasZoomedToFitRef.current = false;
           clearNodeIndexMap();
           return;
         }
@@ -1319,8 +1336,14 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
               hoveredNodeId: null,
               onNodeHover: (nodeId: string | null) => {
                 if (nodeId && flowGraph) {
+                  // 跳过虚拟节点（interface-input, interface-output, interface-info）
+                  if (nodeId === 'interface-input' || nodeId === 'interface-output' || nodeId === 'interface-info') {
+                    return;
+                  }
+
                   const targetNode = flowGraph.getCellById(nodeId);
                   if (targetNode) {
+                    // 只高亮节点，不移动视图和触发侧边栏
                     targetNode.setAttrs({ body: { strokeWidth: 3, stroke: '#1890ff' } });
                   }
                 }
@@ -1361,27 +1384,19 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
             }
           });
 
-          // 调整画布视口，确保面板和流程图都可见
-          setTimeout(() => {
-            if (flowGraph) {
-              // 计算需要的总高度（面板 + 连线间距 + 流程图）
-              const totalContentHeight = (maxY - minY) + estimatedPanelHeight + 20;
-              // 计算缩放比例
-              const viewportHeight = flowGraph.getGraphArea().height;
-              const contentWidth = maxX - minX + 100;
-              const viewportWidth = flowGraph.getGraphArea().width;
-
-              const scaleY = viewportHeight / totalContentHeight;
-              const scaleX = viewportWidth / contentWidth;
-              const scale = Math.min(scaleY, scaleX, 1);
-
-              // 计算中心点，让面板和流程图居中
-              const centerY = panelY + (totalContentHeight / 2);
-              const centerX = minX + (maxX - minX) / 2;
-
-              flowGraph.zoomTo(scale, { center: { x: centerX, y: centerY } });
-            }
-          }, 150);
+          // 调整画布视口，让面板和流程图都可见
+          // 只在首次创建面板时调整，后续切换不再调整以保持一致的缩放
+          if (!hasZoomedToFitRef.current) {
+            setTimeout(() => {
+              if (flowGraph) {
+                flowGraph.zoomToFit({
+                  minScale: 0.1,
+                  maxScale: 0.8
+                });
+                hasZoomedToFitRef.current = true;
+              }
+            }, 150);
+          }
         }
       });
       flowGraph.on('node:showParamsChanged', (args: any) => {
