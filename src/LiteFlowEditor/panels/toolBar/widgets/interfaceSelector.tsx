@@ -4,7 +4,7 @@ import GraphContext from '../../../context/GraphContext';
 import { useInterface } from '../../../context/InterfaceContext';
 import styles from './interfaceSelector.module.less';
 
-const API_BASE_PATH = (window as any).LITEFLOW_CONFIG?.API_BASE_PATH || '/api';
+const API_BASE_PATH = (window as any).LITEFLOW_CONFIG?.API_BASE_PATH || 'api';
 
 interface NodeParameter {
   fieldName: string;

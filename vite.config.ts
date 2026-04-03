@@ -25,6 +25,7 @@ export default defineConfig({
   },
   root: 'demo',
   publicDir: false,
+  base: './',  // 使用相对路径，支持 context-path 部署
   build: {
     outDir: '../dist',
     emptyOutDir: true,

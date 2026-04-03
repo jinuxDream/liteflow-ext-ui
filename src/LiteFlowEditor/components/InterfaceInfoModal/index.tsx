@@ -3,7 +3,7 @@ import { Modal, Table, Tag, Descriptions, Empty } from 'antd';
 import { ApiOutlined, ImportOutlined, ExportOutlined } from '@ant-design/icons';
 import styles from './index.module.less';
 
-const API_BASE_PATH = (window as any).LITEFLOW_CONFIG?.API_BASE_PATH || '/api';
+const API_BASE_PATH = (window as any).LITEFLOW_CONFIG?.API_BASE_PATH || 'api';
 
 interface NodeParameter {
   fieldName: string;
