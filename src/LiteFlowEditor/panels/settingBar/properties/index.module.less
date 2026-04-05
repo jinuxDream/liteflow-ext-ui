@@ -72,6 +72,26 @@
     margin: 0;
     font-weight: 600;
   }
+  .typeBadgeTag {
+    font-size: 12px;
+    padding: 0 6px;
+    height: 18px;
+    line-height: 16px;
+    margin: 0;
+    font-weight: 500;
+  }
+  .contextTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+  }
+  .contextTag {
+    font-size: 11px;
+    padding: 0 3px;
+    height: 14px;
+    line-height: 12px;
+    margin: 0;
+  }
   .infoDesc {
     font-size: 13px;
     color: #000000;
@@ -147,7 +167,7 @@
   }
   .paramRow {
     display: grid;
-    grid-template-columns: auto 1fr auto auto 2fr;
+    grid-template-columns: auto auto 1fr auto auto 2fr;
     gap: 3px;
     align-items: center;
     padding: 3px 5px;
@@ -165,6 +185,10 @@
     height: 12px;
     line-height: 10px;
     margin: 0;
+  }
+  .paramContext {
+    display: flex;
+    align-items: center;
   }
   .paramName {
     font-weight: 600;

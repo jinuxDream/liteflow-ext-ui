@@ -409,6 +409,10 @@ export interface NodeMetadata {
   nodeId?: string;
   nodeName?: string;
   description?: string;
+  /** 节点类型: INIT-初始化, QUERY-查询, COMPUTE-计算, AGGREGATE-聚合, COLLECT-汇总 */
+  type?: string;
+  /** 涉及的上下文类型列表 */
+  contexts?: string[];
   inputParameters?: ParameterInfo[];
   outputParameters?: ParameterInfo[];
   accessRule?: AccessRule;
@@ -416,7 +420,17 @@ export interface NodeMetadata {
   dependencies?: DependencyInfo[];
 }
 
+/**
+ * 参数信息
+ * - context: 参数所属的上下文类型名称（如 PhysicalContext）
+ * - fieldName: 字段名称
+ * - fieldType: 字段类型（如 Integer, List<String>）
+ * - description: 字段描述
+ * - required: 是否必填
+ */
 export interface ParameterInfo {
+  /** 参数所属的上下文类型 */
+  context?: string;
   fieldName: string;
   fieldType: string;
   description: string;

@@ -1,12 +1,30 @@
 import React, { useEffect } from 'react';
 import {Form, Input, Descriptions, Tag, Empty, Divider} from 'antd';
-import {SettingOutlined, SafetyOutlined, OrderedListOutlined, ClusterOutlined} from '@ant-design/icons';
+import {SettingOutlined, SafetyOutlined, OrderedListOutlined, ClusterOutlined, ApiOutlined, AppstoreOutlined} from '@ant-icons';
 import {debounce} from 'lodash';
 import {history} from '../../../hooks/useHistory';
 import ELNode, {NodeMetadata} from '../../../model/node';
 import styles from './index.module.less';
 
 const { TextArea } = Input;
+
+/** 节点类型颜色映射 */
+const NODE_TYPE_COLORS: Record<string, string> = {
+  INIT: 'gold',       // 初始化节点 - 金色
+  QUERY: 'cyan',      // 查询节点 - 青色
+  COMPUTE: 'blue',    // 计算节点 - 蓝色
+  AGGREGATE: 'purple', // 聚合节点 - 紫色
+  COLLECT: 'green',   // 汇总节点 - 绿色
+};
+
+/** 节点类型中文名称映射 */
+const NODE_TYPE_NAMES: Record<string, string> = {
+  INIT: '初始化',
+  QUERY: '查询',
+  COMPUTE: '计算',
+  AGGREGATE: '聚合',
+  COLLECT: '汇总',
+};
 
 interface IProps {
   model: ELNode;
@@ -59,6 +77,24 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
               <span className={styles.infoLabel}>ID:</span>
               <Tag color="blue" className={styles.infoTag}>{metadata.nodeId}</Tag>
             </div>
+            {metadata.type && (
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>类型:</span>
+                <Tag color={NODE_TYPE_COLORS[metadata.type] || 'default'} className={styles.typeBadgeTag}>
+                  {NODE_TYPE_NAMES[metadata.type] || metadata.type}
+                </Tag>
+              </div>
+            )}
+            {metadata.contexts && metadata.contexts.length > 0 && (
+              <div className={styles.infoRow}>
+                <span className={styles.infoLabel}>上下文:</span>
+                <div className={styles.contextTags}>
+                  {metadata.contexts.map((ctx, idx) => (
+                    <Tag key={idx} color="orange" className={styles.contextTag}>{ctx}</Tag>
+                  ))}
+                </div>
+              </div>
+            )}
             {metadata.description && (
               <div className={styles.infoRow}>
                 <span className={styles.infoLabel}>描述:</span>
@@ -87,6 +123,11 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
                       <div className={styles.paramDirection}>
                         <Tag color="blue" className={styles.directionTag}>输入</Tag>
                       </div>
+                      {param.context && (
+                        <div className={styles.paramContext}>
+                          <Tag color="orange" className={styles.contextTag}>{param.context}</Tag>
+                        </div>
+                      )}
                       <div className={styles.paramName}>{param.fieldName}</div>
                       <div className={styles.paramType}>
                         <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
@@ -112,6 +153,11 @@ const ComponentPropertiesEditor: React.FC<IProps> = (props) => {
                       <div className={styles.paramDirection}>
                         <Tag color="green" className={styles.directionTag}>输出</Tag>
                       </div>
+                      {param.context && (
+                        <div className={styles.paramContext}>
+                          <Tag color="orange" className={styles.contextTag}>{param.context}</Tag>
+                        </div>
+                      )}
                       <div className={styles.paramName}>{param.fieldName}</div>
                       <div className={styles.paramType}>
                         <Tag color="cyan" className={styles.typeTag}>{param.fieldType}</Tag>
