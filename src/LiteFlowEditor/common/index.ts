@@ -13,4 +13,9 @@ Graph.registerEdge(LITEFLOW_EDGE, liteflowEdge);
 Graph.registerRouter(LITEFLOW_ROUTER, liteflowRouter);
 Graph.registerAnchor(LITEFLOW_ANCHOR, liteflowAnchor);
 
+// 注册 straight 连接器（用于内容面板的连接线）
+Graph.registerConnector('straight', (sourcePoint, targetPoint) => {
+  return `M ${sourcePoint.x} ${sourcePoint.y} L ${targetPoint.x} ${targetPoint.y}`;
+});
+
 export { LITEFLOW_EDGE, LITEFLOW_ROUTER, LITEFLOW_ANCHOR };

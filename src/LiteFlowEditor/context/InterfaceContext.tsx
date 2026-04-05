@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export interface NodeParameter {
   fieldName: string;
@@ -21,10 +21,32 @@ interface IInterfaceContext {
   setCurrentInterface: (info: InterfaceInfo | null) => void;
 }
 
+const STORAGE_KEY = 'liteflow_current_interface';
+
 const InterfaceContext = createContext<IInterfaceContext | undefined>(undefined);
 
+// 从 localStorage 恢复选中的接口
+const getStoredInterface = (): InterfaceInfo | null => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+};
+
 export const InterfaceProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentInterface, setCurrentInterface] = useState<InterfaceInfo | null>(null);
+  const [currentInterface, setCurrentInterfaceState] = useState<InterfaceInfo | null>(() => getStoredInterface());
+
+  // 持久化到 localStorage
+  const setCurrentInterface = (info: InterfaceInfo | null) => {
+    setCurrentInterfaceState(info);
+    if (info) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(info));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  };
 
   return (
     <InterfaceContext.Provider value={{ currentInterface, setCurrentInterface }}>

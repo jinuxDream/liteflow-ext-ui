@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { Graph } from '@antv/x6';
-import { Tabs } from 'antd';
+import { Tabs, Empty } from 'antd';
 import Basic from './basic';
 import {
   ComponentPropertiesEditor,
   ConditionPropertiesEditor,
 } from './properties';
 import Outline from './outline';
+import ContextView from './contextView';
+import ELView from './elView';
+import LineageView from './lineageView';
 import ELNode from '../../model/node';
 import NodeOperator from '../../model/el/node-operator';
+import { getSettingBarTab, setSettingBarTab, subscribeSettingBarTab } from '../layout';
 import styles from './index.module.less';
 
 interface IProps {
@@ -20,9 +24,15 @@ const SettingBar: React.FC<IProps> = (props) => {
 
   const [selectedModel, setSelectedModel] = useState<ELNode | null>(null);
   const [updateKey, setUpdateKey] = useState(0);
-  const [activeKey, setActiveKey] = useState('properties');
+  const [activeKey, setActiveKeyLocal] = useState(getSettingBarTab());
 
   const forceUpdate = useReducer((n) => n + 1, 0)[1];
+
+  // 包装 setActiveKey，同时更新全局状态
+  const setActiveKey = (key: string) => {
+    setActiveKeyLocal(key);
+    setSettingBarTab(key);
+  };
 
   useEffect(() => {
     forceUpdate();
@@ -37,11 +47,19 @@ const SettingBar: React.FC<IProps> = (props) => {
       setUpdateKey(prev => prev + 1);
       setActiveKey('properties');
     };
+
+    // 订阅 Tab 切换（来自外部如数据流视图按钮）
+    const unsubscribe = subscribeSettingBarTab((tab) => {
+      setActiveKeyLocal(tab);
+    });
+
     flowGraph.on('settingBar:forceUpdate', handler);
     flowGraph.on('model:select', handleSelect);
+
     return () => {
       flowGraph.off('settingBar:forceUpdate', handler);
       flowGraph.off('model:select', handleSelect);
+      unsubscribe();
     };
   }, [flowGraph]);
 
@@ -71,15 +89,30 @@ const SettingBar: React.FC<IProps> = (props) => {
       children: propertiesPanel,
     },
     {
+      key: 'lineage',
+      label: '数据血缘',
+      children: <LineageView flowGraph={flowGraph} />,
+    },
+    {
       key: 'outline',
       label: '结构树',
       children: <Outline flowGraph={flowGraph} />,
+    },
+    {
+      key: 'el',
+      label: 'EL',
+      children: <ELView flowGraph={flowGraph} />,
+    },
+    {
+      key: 'context',
+      label: '上下文',
+      children: <ContextView flowGraph={flowGraph} />,
     },
   ];
 
   return (
     <div className={styles.liteflowEditorSettingBarContainer}>
-      <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} />
+      <Tabs activeKey={activeKey} onChange={setActiveKey} items={items} tabBarStyle={{ overflowX: 'auto' }} />
     </div>
   );
 };

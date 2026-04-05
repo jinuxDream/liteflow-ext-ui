@@ -14,6 +14,7 @@ import classNames from 'classnames';
 import styles from './index.module.less';
 import { getGlobalViewMode, registerRefresh } from '../../context/ViewModeContext';
 import { getNodeIndex } from '../../context/NodeIndexContext';
+import { getGlobalHoverPanelEnabled } from '../../context/HoverPanelContext';
 
 interface INodeViewProps {
   icon: string;
@@ -24,6 +25,7 @@ interface INodeViewProps {
 
 // 节点类型对应的主题色
 const NODE_TYPE_COLORS: Record<string, string> = {
+  // 旧节点类型（LiteFlow组件类型）
   'NodeComponent': '#1890ff',
   'ScriptCommonComponent': '#1890ff',
   'NodeIfComponent': '#fa8c16',
@@ -51,6 +53,21 @@ const NODE_TYPE_COLORS: Record<string, string> = {
   'LITEFLOW_INTERMEDIATE_END': '#faad14',
   'NodeVirtualComponent': '#d9d9d9',
   'fallback': '#8c8c8c',
+  // 节点角色类型（@NodeDef.type）
+  'INIT': '#faad14',
+  'QUERY': '#13c2c2',
+  'COMPUTE': '#1890ff',
+  'AGGREGATE': '#722ed1',
+  'COLLECT': '#52c41a',
+};
+
+// 节点角色中文名称
+const NODE_TYPE_NAMES: Record<string, string> = {
+  'INIT': '初始化',
+  'QUERY': '查询',
+  'COMPUTE': '计算',
+  'AGGREGATE': '聚合',
+  'COLLECT': '汇总',
 };
 
 const NodeView: React.FC<INodeViewProps> = (props) => {
@@ -62,6 +79,15 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
 
   React.useEffect(() => {
     return registerRefresh(() => forceUpdate());
+  }, []);
+
+  // 监听悬停开关变化，触发重新渲染
+  React.useEffect(() => {
+    const checkHoverEnabled = () => {
+      forceUpdate();
+    };
+    const interval = setInterval(checkHoverEnabled, 200);
+    return () => clearInterval(interval);
   }, []);
 
   // 获取当前视图模式
@@ -83,13 +109,17 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
   }
 
   const displayName = metadata?.nodeName || nodeId;
+  const nodeTypeName = metadata?.type || '';
 
   const steps = metadata?.steps || [];
   const inputParams = metadata?.inputParameters || [];
   const outputParams = metadata?.outputParameters || [];
   const dependencies = metadata?.dependencies || [];
 
-  const hasDetail = steps.length > 0 || inputParams.length > 0 || outputParams.length > 0 || dependencies.length > 0;
+  // 有 metadata 的节点都按有内容样式展示
+  const hasDetail = metadata && metadata.nodeName;
+  // 悬浮窗只在有额外详情时显示（steps/params/dependencies）
+  const hasExtraDetail = steps.length > 0 || inputParams.length > 0 || outputParams.length > 0 || dependencies.length > 0;
 
   // 虚拟节点特殊处理
   const isVirtual = nodeType === 'NodeVirtualComponent';
@@ -365,9 +395,16 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
     );
   };
 
-  return (
+  // 悬浮窗只在有额外详情且开关启用时显示
+  const hoverEnabled = getGlobalHoverPanelEnabled();
+  const showTooltip = hasExtraDetail && hoverEnabled;
+
+  const tooltipContent = showTooltip ? renderDetailPopup() : null;
+
+  // 条件渲染 Tooltip 来确保开关关闭时立即生效
+  const tooltipElement = showTooltip ? (
     <Tooltip
-      title={hasDetail ? renderDetailPopup() : null}
+      title={tooltipContent}
       placement="rightTop"
       overlayClassName={styles.detailTooltip}
       overlayInnerStyle={{ width: 420, maxWidth: 420, maxHeight: '80vh' }}
@@ -383,6 +420,14 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
         {getNodeIndex(node.id) && (
           <div className={styles.nodeIndex}>{getNodeIndex(node.id)}</div>
         )}
+        {nodeTypeName && (
+          <div
+            className={styles.nodeTypeBadge}
+            style={{ backgroundColor: NODE_TYPE_COLORS[nodeTypeName] || '#8c8c8c' }}
+          >
+            {NODE_TYPE_NAMES[nodeTypeName] || nodeTypeName}
+          </div>
+        )}
         <img className={styles.nodeIcon} src={icon} alt="" />
         {displayName && (
           <span className={styles.nodeName}>{displayName}</span>
@@ -390,7 +435,34 @@ const NodeView: React.FC<INodeViewProps> = (props) => {
         {children}
       </div>
     </Tooltip>
+  ) : (
+    <div
+      className={classNames(styles.nodeContainer, {
+        [styles.hasDetail]: hasDetail,
+        [styles.isVirtual]: isVirtual,
+      })}
+      style={hasDetail && !isVirtual ? { borderColor: nodeColor } : undefined}
+    >
+      {getNodeIndex(node.id) && (
+        <div className={styles.nodeIndex}>{getNodeIndex(node.id)}</div>
+      )}
+      {nodeTypeName && (
+        <div
+          className={styles.nodeTypeBadge}
+          style={{ backgroundColor: NODE_TYPE_COLORS[nodeTypeName] || '#8c8c8c' }}
+        >
+          {NODE_TYPE_NAMES[nodeTypeName] || nodeTypeName}
+        </div>
+      )}
+      <img className={styles.nodeIcon} src={icon} alt="" />
+      {displayName && (
+        <span className={styles.nodeName}>{displayName}</span>
+      )}
+      {children}
+    </div>
   );
+
+  return tooltipElement;
 };
 
 export default NodeView;

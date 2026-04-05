@@ -71,11 +71,12 @@ export default class NodeOperator extends ELNode {
   public toCells(options: Record<string, any> = {}): Cell[] {
     if (!this.node) {
       this.resetCells();
-      const { id, type, cells } = this;
+      const { id, type, cells, metadata } = this;
+      const displayName = metadata?.nodeName || id;
       const node = Node.create({
         shape: getNodeShapeByType(type),
         attrs: {
-          label: { text: id },
+          label: { text: displayName },
         },
         ...(options || {}),
       });

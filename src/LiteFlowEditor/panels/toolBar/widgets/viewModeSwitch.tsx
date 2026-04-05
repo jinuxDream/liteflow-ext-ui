@@ -22,15 +22,27 @@ const ViewModeSwitch: React.FC<IProps> = ({ flowGraph }) => {
   const graph = flowGraph || useContext(GraphContext)?.graph;
 
   const options = [
-    { value: 'summary', label: '摘要视图', icon: <FileTextOutlined /> },
-    { value: 'logic', label: '逻辑视图', icon: <ApartmentOutlined /> },
-    { value: 'dataflow', label: '数据流视图', icon: <SwapOutlined /> },
-    { value: 'dependency', label: '依赖视图', icon: <ClusterOutlined /> },
+    { value: 'summary', label: '摘要', icon: <FileTextOutlined /> },
+    { value: 'logic', label: '逻辑', icon: <ApartmentOutlined /> },
+    { value: 'dataflow', label: '血缘', icon: <SwapOutlined /> },
+    { value: 'dependency', label: '依赖', icon: <ClusterOutlined /> },
   ];
 
   const handleViewModeChange = (mode: ViewMode) => {
+    const prevMode = viewMode;
     setViewMode(mode);
     setGlobalViewMode(mode);
+
+    // 点击数据流视图时，打开全屏数据血缘
+    if (mode === 'dataflow') {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('openDataLineage'));
+      }, 0);
+    } else if (prevMode === 'dataflow') {
+      // 只在从数据流视图切换到其他视图时退出全屏
+      window.dispatchEvent(new CustomEvent('closeDataLineage'));
+    }
+
     // 触发节点重新渲染
     if (graph) {
       graph.getNodes().forEach((node: any) => {

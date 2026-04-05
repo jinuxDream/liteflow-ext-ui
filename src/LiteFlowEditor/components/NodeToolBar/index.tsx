@@ -7,6 +7,7 @@ import { DeleteOutlined, EditOutlined, MinusSquareOutlined, PlusSquareOutlined }
 import styles from './index.module.less';
 import { history } from '../../hooks/useHistory';
 import GraphContext from '../../context/GraphContext';
+import { getGlobalHoverPanelEnabled } from '../../context/HoverPanelContext';
 
 interface IProps {
   node: Node;

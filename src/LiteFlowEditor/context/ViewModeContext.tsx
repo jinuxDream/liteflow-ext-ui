@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
-type ViewMode = '' | 'summary' | 'logic' | 'dataflow' | 'dependency';
+type ViewMode = '' | 'summary' | 'logic' | 'dataflow' | 'dependency' | 'context';
 
 interface ViewModeContextType {
   viewMode: ViewMode;
@@ -52,7 +52,7 @@ export const ViewModeProvider: React.FC<ViewModeProviderProps> = ({ children }) 
 
   const toggleViewMode = useCallback(() => {
     setViewModeState((prev) => {
-      const modes: ViewMode[] = ['', 'summary', 'logic', 'dataflow', 'dependency'];
+      const modes: ViewMode[] = ['', 'summary', 'logic', 'dataflow', 'dependency', 'context'];
       const currentIndex = modes.indexOf(prev);
       const newMode = modes[(currentIndex + 1) % modes.length];
       globalViewMode = newMode;
@@ -85,7 +85,7 @@ export const useViewMode = (): ViewModeContextType => {
         triggerRefresh();
       },
       toggleViewMode: () => {
-        const modes: ViewMode[] = ['', 'summary', 'logic', 'dataflow', 'dependency'];
+        const modes: ViewMode[] = ['', 'summary', 'logic', 'dataflow', 'dependency', 'context'];
         const currentIndex = modes.indexOf(globalViewMode);
         globalViewMode = modes[(currentIndex + 1) % modes.length];
         triggerRefresh();

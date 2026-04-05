@@ -9,7 +9,8 @@ import {
 } from '@ant-design/icons';
 import { getGlobalViewMode, ViewMode } from '../../context/ViewModeContext';
 import { getNodeIndex } from '../../context/NodeIndexContext';
-import DataFlowView from '../DataFlowView';
+import { getGlobalHoverPanelEnabled } from '../../context/HoverPanelContext';
+import DataLineageGraph from '../DataLineageGraph';
 import DependencyView from '../DependencyView';
 import styles from './index.module.less';
 
@@ -36,6 +37,19 @@ const ContentPanelNode: React.FC<ContentPanelNodeProps> = ({
 }) => {
   // 使用全局状态，优先于 props
   const [viewMode, setViewMode] = useState<ViewMode>(propViewMode || getGlobalViewMode());
+
+  // 监听全局悬停状态变化
+  const [hoverPanelEnabled, setHoverPanelEnabled] = useState(getGlobalHoverPanelEnabled());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const current = getGlobalHoverPanelEnabled();
+      if (current !== hoverPanelEnabled) {
+        setHoverPanelEnabled(current);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, [hoverPanelEnabled]);
 
   // 监听全局 viewMode 变化
   useEffect(() => {
@@ -247,14 +261,16 @@ const ContentPanelNode: React.FC<ContentPanelNodeProps> = ({
     });
 
     return (
-      <div className={styles.contentPanelNode}>
+      <div className={styles.contentPanelNode} style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         <div className={styles.panelTitle}>
           {getViewModeTitle()} · 上下文字段 {allFields.size} 个
         </div>
-        <DataFlowView
-          nodes={filteredNodes}
-          onNodeClick={(nodeId) => onNodeHover?.(nodeId)}
-        />
+        <div style={{ flex: 1, minHeight: 0 }}>
+          <DataLineageGraph
+            nodes={filteredNodes}
+            onNodeClick={(nodeId) => onNodeHover?.(nodeId)}
+          />
+        </div>
       </div>
     );
   }
@@ -290,8 +306,16 @@ const ContentPanelNode: React.FC<ContentPanelNodeProps> = ({
         {interfaceInfoNode && (
           <div
             className={`${styles.nodeCard} ${styles.interfaceCard} ${hoveredNodeId === interfaceInfoNode.id ? styles.hovered : ''}`}
-            onMouseEnter={() => onNodeHover?.(interfaceInfoNode.id)}
-            onMouseLeave={() => onNodeHover?.(null)}
+            onMouseEnter={() => {
+              if (hoverPanelEnabled) {
+                onNodeHover?.(interfaceInfoNode.id);
+              }
+            }}
+            onMouseLeave={() => {
+              if (hoverPanelEnabled) {
+                onNodeHover?.(null);
+              }
+            }}
           >
             <div className={styles.interfaceIcon}>
               <ApiOutlined />
@@ -311,8 +335,16 @@ const ContentPanelNode: React.FC<ContentPanelNodeProps> = ({
             <div
               key={node.id}
               className={`${styles.nodeCard} ${hoveredNodeId === node.id ? styles.hovered : ''}`}
-              onMouseEnter={() => onNodeHover?.(node.id)}
-              onMouseLeave={() => onNodeHover?.(null)}
+              onMouseEnter={() => {
+                if (hoverPanelEnabled) {
+                  onNodeHover?.(node.id);
+                }
+              }}
+              onMouseLeave={() => {
+                if (hoverPanelEnabled) {
+                  onNodeHover?.(null);
+                }
+              }}
             >
               {nodeIndex && <div className={styles.nodeIndex}>{nodeIndex}</div>}
               <div className={styles.nodeInfo}>

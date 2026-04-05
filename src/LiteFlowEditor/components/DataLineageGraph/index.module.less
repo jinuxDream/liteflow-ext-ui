@@ -1,0 +1,908 @@
+.dataLineageGraph {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+// 顶部 Tab 切换
+.viewTabs {
+  display: flex;
+  border-bottom: 1px solid #e8e8e8;
+  background: #fafafa;
+  flex-shrink: 0;
+}
+
+.viewTab {
+  padding: 12px 20px;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    color: #1890ff;
+    background: #f5f5f5;
+  }
+
+  &.active {
+    color: #1890ff;
+    border-bottom-color: #1890ff;
+    background: #fff;
+    font-weight: 500;
+  }
+}
+
+.viewContent {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+
+// 三栏布局
+.threeColumnLayout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+// 两栏布局
+.twoColumnLayout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+// 通用的面板样式
+.panelHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e8e8e8;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.count {
+  font-size: 12px;
+  color: #8c8c8c;
+  background: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.searchBox {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  height: 48px;
+  box-sizing: border-box;
+}
+
+.panelList {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+  min-height: 0;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  gap: 8px;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &.selected {
+    background: #e6f7ff;
+    border-left: 3px solid #1890ff;
+  }
+}
+
+.itemName {
+  flex: 1;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemCount {
+  font-size: 12px;
+  color: #8c8c8c;
+  background: #f5f5f5;
+  padding: 1px 6px;
+  border-radius: 4px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.emptyPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+}
+
+// 第一栏：上下文列表
+.contextPanel {
+  width: 220px;
+  border-right: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+  background: #fafafa;
+}
+
+// 第二栏：字段列表
+.fieldPanel {
+  width: 260px;
+  border-right: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+  background: #fafafa;
+}
+
+// 节点列表面板
+.nodeListPanel {
+  width: 280px;
+  border-right: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100%;
+  background: #fafafa;
+}
+
+// 第三栏：血缘详情
+.detailPanel {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #fff;
+}
+
+.detailContent {
+  padding: 12px;
+}
+
+.emptyDetail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+}
+
+// 字段卡片
+.fieldCard {
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+
+  .ant-card-body {
+    padding: 12px;
+  }
+}
+
+.fieldHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.fieldTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.fieldMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fieldType {
+  font-size: 12px;
+  color: #666;
+  background: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+}
+
+.fieldContext {
+  font-size: 12px;
+  color: #1890ff;
+  background: #e6f7ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #91d5ff;
+}
+
+.fieldDescription {
+  font-size: 12px;
+  color: #666;
+  margin-top: 6px;
+  line-height: 1.5;
+  padding: 6px 8px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #f0f0f0;
+}
+
+.paramDesc {
+  font-size: 11px;
+  color: #666;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 节点卡片
+.nodeCard {
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+  border-radius: 6px;
+  border: 1px solid #91d5ff;
+
+  .ant-card-body {
+    padding: 10px 12px;
+  }
+}
+
+.nodeCardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nodeCardLeft {
+  flex-shrink: 0;
+}
+
+.nodeCardRight {
+  display: flex;
+  gap: 16px;
+}
+
+.statItem {
+  text-align: center;
+}
+
+.statValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1890ff;
+  line-height: 1;
+}
+
+.statLabel {
+  font-size: 10px;
+  color: #8c8c8c;
+  margin-top: 2px;
+}
+
+// 参数行布局
+.paramsRow {
+  display: flex;
+  gap: 12px;
+}
+
+.paramsCard {
+  flex: 1;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+
+  .ant-card-head {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e8e8e8;
+    font-size: 12px;
+    font-weight: 600;
+    background: #fafafa;
+    min-height: auto;
+  }
+
+  .ant-card-body {
+    padding: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
+.paramsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paramItem {
+  padding: 4px 6px;
+  background: #fafafa;
+  border-radius: 4px;
+  border: 1px solid #f0f0f0;
+}
+
+.paramLine1 {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.paramLine2 {
+  font-size: 11px;
+  color: #333;
+  margin-top: 2px;
+  padding-left: 2px;
+  line-height: 1.4;
+}
+
+.paramSource {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.paramContext {
+  font-size: 10px;
+  color: #1890ff;
+  background: #e6f7ff;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.paramType {
+  font-size: 10px;
+  color: #8c8c8c;
+}
+
+.paramRequired {
+  font-size: 9px;
+  color: #ff4d4f;
+  background: #fff1f0;
+  padding: 1px 4px;
+  border-radius: 2px;
+  border: 1px solid #ffccc7;
+}
+
+.sourceLink {
+  color: #1890ff;
+  cursor: pointer;
+  margin-right: 4px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.consumerCount {
+  color: #52c41a;
+  font-size: 10px;
+}
+
+.unusedTag {
+  color: #faad14;
+  font-size: 10px;
+}
+
+// 上下文卡片
+.contextCard {
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%);
+  border-radius: 8px;
+  border: 1px solid #b7eb8f;
+
+  .ant-card-body {
+    padding: 16px;
+  }
+}
+
+// 来源节点卡片
+.sourceCard, .inputCard {
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+
+  .ant-card-head {
+    border-bottom: 1px solid #e8e8e8;
+    padding: 8px 12px;
+    background: #fff7e6;
+    min-height: auto;
+  }
+
+  .ant-card-head-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #fa8c16;
+  }
+
+  .ant-card-body {
+    padding: 8px 12px;
+  }
+}
+
+// 消费节点卡片
+.consumerCard, .outputCard {
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+
+  .ant-card-head {
+    border-bottom: 1px solid #e8e8e8;
+    padding: 8px 12px;
+    background: #e6f7ff;
+    min-height: auto;
+  }
+
+  .ant-card-head-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1890ff;
+  }
+
+  .ant-card-body {
+    padding: 8px 12px;
+  }
+}
+
+.interfaceTag {
+  margin-bottom: 4px;
+}
+
+.nodeItem {
+  cursor: pointer;
+  padding: 6px 0 !important;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.nodeName {
+  flex: 1;
+  font-size: 12px;
+  color: #333;
+}
+
+.noData {
+  color: #999;
+  font-size: 11px;
+  text-align: center;
+  padding: 12px;
+}
+
+// 字段流转列表
+.fieldFlowList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fieldFlowItem {
+  padding: 10px 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+}
+
+.fieldFlowHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fieldFlowType {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.fieldFlowPath {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.flowArrow {
+  color: #999;
+  font-size: 10px;
+}
+
+.flowArrowLong {
+  color: #999;
+  font-size: 12px;
+  margin: 0 4px;
+}
+
+.flowNodeLink {
+  color: #1890ff;
+  cursor: pointer;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.flowIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  background: #1890ff;
+  border-radius: 50%;
+}
+
+.flowUnknown {
+  color: #ff4d4f;
+  font-size: 12px;
+}
+
+.flowUnused {
+  color: #faad14;
+  font-size: 12px;
+}
+
+.flowMore {
+  color: #8c8c8c;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+// 上下文字段流转容器
+.fieldFlowContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fieldFlowCard {
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+}
+
+.fieldFlowRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldFlowLine1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fieldFlowLine2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 4px;
+}
+
+.fieldFlowType {
+  font-size: 11px;
+  color: #8c8c8c;
+}
+
+.fieldFlowDesc {
+  font-size: 11px;
+  color: #666;
+}
+
+.flowLabel {
+  font-size: 11px;
+  color: #666;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.flowSeparator {
+  color: #d9d9d9;
+  font-size: 14px;
+  margin: 0 12px;
+  font-weight: 300;
+}
+
+.flowNodeTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: #e6f7ff;
+  border-radius: 3px;
+  font-size: 11px;
+  color: #1890ff;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: #bae7ff;
+  }
+}
+
+.flowNodeTagWrite {
+  background: #fff7e6;
+  color: #d46b08;
+
+  &:hover {
+    background: #ffe7ba;
+  }
+}
+
+.flowEmpty {
+  font-size: 11px;
+  color: #bfbfbf;
+}
+
+// ==================== 统一的节点标签样式 ====================
+
+// 写入节点标签（橙色）
+.nodeTagWrite {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #fff7e6;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #d46b08;
+  cursor: pointer;
+  border: 1px solid #ffd591;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #ffe7ba;
+    border-color: #ffa940;
+  }
+}
+
+// 读取节点标签（蓝色）
+.nodeTagRead {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #e6f7ff;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #1890ff;
+  cursor: pointer;
+  border: 1px solid #91d5ff;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #bae7ff;
+    border-color: #40a9ff;
+  }
+}
+
+// 统一的字段标签
+.fieldTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.fieldTagInput {
+  background: #f9f0ff;
+  color: #722ed1;
+  border: 1px solid #d3adf7;
+}
+
+.fieldTagProcess {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+
+.fieldTagOutput {
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+// 统一的节点序号
+.nodeIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  background: #8c8c8c;
+  border-radius: 50%;
+}
+
+// 统一的流转行布局
+.lineageRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fafafa;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border: 1px solid #f0f0f0;
+}
+
+.lineageRowField {
+  flex-shrink: 0;
+}
+
+.lineageRowContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lineageRowLabel {
+  font-size: 11px;
+  color: #8c8c8c;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+
+.lineageRowSeparator {
+  width: 1px;
+  height: 14px;
+  background: #d9d9d9;
+  margin: 0 4px;
+}
+
+// ==================== 字段分组样式（节点血缘用） ====================
+
+.fieldGroup {
+  margin-bottom: 12px;
+}
+
+.fieldGroupHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+}
+
+.fieldGroupCount {
+  font-size: 11px;
+  color: #8c8c8c;
+  background: #f0f0f0;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.fieldGroupList {
+  padding: 8px;
+  background: #fff;
+}
+
+.fieldGroupItem {
+  padding: 8px 10px;
+  background: #fafafa;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border: 1px solid #f0f0f0;
+}
+
+.fieldGroupLine1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fieldContextTag {
+  font-size: 10px;
+  color: #722ed1;
+  background: #f9f0ff;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #d3adf7;
+  flex-shrink: 0;
+}
+
+.fieldGroupLine2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.fieldGroupItemType {
+  font-size: 11px;
+  color: #8c8c8c;
+}
+
+.fieldGroupItemDesc {
+  font-size: 11px;
+  color: #666;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flowFromLabel {
+  font-size: 11px;
+  color: #d46b08;
+  font-weight: 500;
+}
+
+.flowToLabel {
+  font-size: 11px;
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.fieldGroupEmpty {
+  padding: 16px;
+  text-align: center;
+  color: #bfbfbf;
+  font-size: 12px;
+}

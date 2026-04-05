@@ -17,13 +17,15 @@ import ShowDependencies from './showDependencies';
 import ShowAll from './showAll';
 import InterfaceSelector from './interfaceSelector';
 import ViewModeSwitch from './viewModeSwitch';
+import HoverPanelToggle from './hoverPanel';
+import ExecutionTraceWidget from './executionTrace';
 
 interface IProps {
   flowGraph: Graph;
 }
 
 const tools: React.FC<IProps>[][] = [
-  [InterfaceSelector, ViewModeSwitch],
+  [InterfaceSelector, ViewModeSwitch, HoverPanelToggle, ExecutionTraceWidget],
   [Zoom],
   [FitWindow, Undo, Redo, Selection, Save, View, Fullscreen, ShowParams, ShowSteps, ShowDependencies, ShowAll],
 ];

@@ -40,7 +40,10 @@
     }
 
     .nodeName {
-      display: none; // 无内容节点不显示文字
+      font-size: 12px;
+      color: #333;
+      margin-top: 4px;
+      text-align: center;
     }
   }
 
@@ -66,7 +69,7 @@
       max-width: 95px;
       text-align: left;
       line-height: 1.4;
-      white-space: normal; // 允许换行
+      white-space: normal;
       word-break: break-all;
     }
 
@@ -115,6 +118,20 @@
   border-radius: 11px;
   box-shadow: 0 2px 6px rgba(24, 144, 255, 0.4);
   z-index: 10;
+}
+
+// 节点类型徽章（右上角）
+.nodeTypeBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  z-index: 11;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .nodeName {
@@ -223,7 +240,7 @@
   color: #999;
 }
 
-// 详情弹出层样式 - 与属性面板完全一致
+// 详情弹出层样式
 .detailPopup {
   padding: 8px;
   width: 540px;

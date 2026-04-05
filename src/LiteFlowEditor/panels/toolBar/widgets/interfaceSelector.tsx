@@ -60,8 +60,14 @@ const InterfaceSelector: React.FC<IProps> = () => {
       .then((data) => {
         if (data && data.length) {
           setInterfaces(data);
-          // 默认选中第一个接口
-          if (data.length > 0 && !currentInterface) {
+          // 如果已有选中的接口（从 localStorage 恢复），加载对应的流程
+          if (currentInterface?.chainId) {
+            const found = data.find((item: InterfaceInfo) => item.chainId === currentInterface.chainId);
+            if (found) {
+              loadChainById(found.chainId);
+            }
+          } else if (data.length > 0) {
+            // 默认选中第一个接口
             handleSelectInterface(data[0]);
           }
         }
@@ -72,7 +78,7 @@ const InterfaceSelector: React.FC<IProps> = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [currentInterface]);
+  }, [currentInterface?.chainId]);
 
   // Select change handler
   const handleSelectChange = (chainId: string) => {

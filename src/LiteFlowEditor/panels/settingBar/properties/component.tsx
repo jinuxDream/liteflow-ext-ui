@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {Form, Input, Descriptions, Tag, Empty, Divider} from 'antd';
-import {SettingOutlined, SafetyOutlined, OrderedListOutlined, ClusterOutlined, ApiOutlined, AppstoreOutlined} from '@ant-icons';
+import {SettingOutlined, SafetyOutlined, OrderedListOutlined, ClusterOutlined} from '@ant-design/icons';
 import {debounce} from 'lodash';
 import {history} from '../../../hooks/useHistory';
 import ELNode, {NodeMetadata} from '../../../model/node';

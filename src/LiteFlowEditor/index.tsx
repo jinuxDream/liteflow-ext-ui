@@ -17,6 +17,7 @@ import { ShowParamsProvider } from './context/ShowParamsContext';
 import { ShowStepsProvider } from './context/ShowStepsContext';
 import { ShowDependenciesProvider } from './context/ShowDependenciesContext';
 import { ViewModeProvider, getGlobalViewMode } from './context/ViewModeContext';
+import { HoverPanelProvider, getGlobalHoverPanelEnabled } from './context/HoverPanelContext';
 import { updateNodeIndexMap, clearNodeIndexMap, getNodeIndex } from './context/NodeIndexContext';
 import { triggerRefresh } from './context/ViewModeContext';
 import { PanelProvider, usePanel } from './context/PanelContext';
@@ -99,7 +100,7 @@ const defaultPadInfo: IPadInfo = {
 
 const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function (props, ref) {
   const { className, onReady, widgets, children, showSideBar = true, enableEdit = true, showEdgeAddButton = true } = props;
-  const { showPanel } = usePanel();
+  const { showPanel, hidePanel } = usePanel();
   const { currentInterface } = useInterface();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<HTMLDivElement>(null);
@@ -114,6 +115,8 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
   const [dependenciesNodesMap, setDependenciesNodesMap] = useState<Record<string, string>>({});
   const [contentPanelNodeId, setContentPanelNodeId] = useState<string | null>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const [contextViewData, setContextViewData] = useState<Record<string, any>>({});
+  const [selectedContextForHighlight, setSelectedContextForHighlight] = useState<string | null>(null);
   // 开始节点悬停状态（替代原来的点击弹窗）
   const [startNodeHovered, setStartNodeHovered] = useState(false);
   // 开始节点位置
@@ -126,6 +129,8 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
   const hasZoomedToFitRef = useRef<boolean>(false);
   const hasInitializedIndexesRef = useRef<boolean>(false);
   const currentInterfaceRef = useRef<InterfaceInfo | null>(null);
+  // 待渲染的 model（用于 flowGraph 初始化后渲染）
+  const pendingModelRef = useRef<ELNode | null>(null);
   // 悬停计时器
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -146,7 +151,22 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
       const model = ELBuilder.build(data || {});
       setModel(model);
       history.cleanHistory();
-      flowGraph?.zoomToFit({minScale: MIN_ZOOM, maxScale: 1});
+
+      // 如果 flowGraph 已初始化，直接渲染
+      if (flowGraph) {
+        const modelJSON = model.toCells() as Cell[];
+        flowGraph.lockScroller();
+        flowGraph.startBatch('update');
+        flowGraph.resetCells(modelJSON);
+        forceLayout(flowGraph);
+        flowGraph.stopBatch('update');
+        flowGraph.unlockScroller();
+        flowGraph.trigger('model:changed');
+        flowGraph.zoomToFit({minScale: MIN_ZOOM, maxScale: 1});
+      } else {
+        // flowGraph 未初始化，保存 pending model 等待渲染
+        pendingModelRef.current = model;
+      }
     }
   }
   useImperativeHandle(ref, () => currentEditor as any);
@@ -157,6 +177,23 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
       onReady?.(flowGraph);
       setFlowGraph(flowGraph);
       history.init(flowGraph);
+
+      // 检查是否有待渲染的 model
+      if (pendingModelRef.current) {
+        const model = pendingModelRef.current;
+        pendingModelRef.current = null;
+        const modelJSON = model.toCells() as Cell[];
+        flowGraph.lockScroller();
+        flowGraph.startBatch('update');
+        flowGraph.resetCells(modelJSON);
+        forceLayout(flowGraph);
+        flowGraph.stopBatch('update');
+        flowGraph.unlockScroller();
+        flowGraph.trigger('model:changed');
+        flowGraph.zoomToFit({minScale: MIN_ZOOM, maxScale: 1});
+        // 渲染完成后初始化节点序号（force: true 强制刷新）
+        setTimeout(() => initNodeIndexes(true), 100);
+      }
 
       // 初始化节点序号（按位置排序：从左到右，从上到下）
       // 只给有内容的节点分配序号
@@ -172,11 +209,8 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
           if (data && data.model) {
             const bbox = node.getBBox();
             const metadata = data.model.metadata || {};
-            const steps = metadata.steps || [];
-            const inputParams = metadata.inputParameters || [];
-            const outputParams = metadata.outputParameters || [];
-            const dependencies = metadata.dependencies || [];
-            const hasContent = steps.length > 0 || inputParams.length > 0 || outputParams.length > 0 || dependencies.length > 0;
+            // 有 metadata.nodeName 的节点都分配序号
+            const hasContent = !!(metadata && metadata.nodeName);
 
             nodesWithContent.push({
               id: node.id,
@@ -288,12 +322,8 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
         const data = node.getData();
         if (data && data.model && data.model.metadata) {
           const metadata = data.model.metadata;
-          const steps = metadata.steps || [];
-          const inputParams = metadata.inputParameters || [];
-          const outputParams = metadata.outputParameters || [];
-          const dependencies = metadata.dependencies || [];
-
-          if (steps.length > 0 || inputParams.length > 0 || outputParams.length > 0 || dependencies.length > 0) {
+          // 有 metadata.nodeName 的节点都分配序号
+          if (metadata.nodeName) {
             const bbox = node.getBBox();
             nodesWithContent.push({
               id: node.id,
@@ -484,37 +514,6 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
         });
         setContentPanelNodeId(panelId);
         contentPanelNodeIdRef.current = panelId;
-
-        // 创建连线：从面板底部到对应节点
-        contents.forEach((content, index) => {
-          const targetNode = flowGraph.getCellById(content.id);
-          if (targetNode) {
-            const targetBbox = targetNode.getBBox();
-            // 计算卡片在面板内的位置
-            const cardCol = index % cols;
-            const cardRow = Math.floor(index / cols);
-            const cardWidth = 200;
-            const cardGap = 12;
-            const cardX = panelX + 16 + cardCol * (cardWidth + cardGap) + cardWidth / 2;
-            const cardY = panelY + 50 + cardRow * (maxNodeHeight + 12) + maxNodeHeight;
-
-            // 创建直线连接（无折角）
-            flowGraph.addEdge({
-              id: `content-edge-${content.id}`,
-              source: { x: cardX, y: cardY },
-              target: { x: targetBbox.center.x, y: targetBbox.y },
-              attrs: {
-                line: {
-                  stroke: '#faad14',
-                  strokeWidth: 1.5,
-                  targetMarker: null
-                }
-              },
-              connector: 'straight',
-              zIndex: -1
-            });
-          }
-        });
 
         // 更新画布内容区域，让面板和流程图都可见
         // 只在首次创建面板时调整，后续切换不再调整以保持一致的缩放
@@ -1147,16 +1146,35 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
       flowGraph.on('graph:hideContextMenu', hideHandler);
       flowGraph.on('graph:showContextPad', showContextPad);
       flowGraph.on('graph:hideContextPad', hideContextPad);
-      flowGraph.on('model:change', handleModelChange);
+      flowGraph.on('model:changed', () => {
+        // 初始化节点序号
+        initNodeIndexes();
+      });
       flowGraph.on('panel:show', showPanel);
 
-      // 鼠标进入节点时检测是否是开始节点
+      // 点击画布空白区域时隐藏右侧面板
+      flowGraph.on('blank:click', () => {
+        hidePanel();
+      });
+
+      // 鼠标进入节点时检测是否是开始节点，并处理悬停高亮
       flowGraph.on('node:mouseenter', (args: any) => {
         const { node } = args;
         // 获取节点 shape，判断是否是开始节点
         const shape = node.shape;
-        // 开始节点的 shape 是 'LITEFLOW_START'
-        if (shape === 'LITEFLOW_START') {
+
+        // 悬停高亮功能（排除虚拟节点和开始节点）
+        if (getGlobalHoverPanelEnabled() && node.id && !node.id.startsWith('content-panel') && !node.id.startsWith('interface-')) {
+          // 跳过虚拟节点和开始节点
+          if (shape !== 'LITEFLOW_START') {
+            node.setAttrs({
+              body: { strokeWidth: 3, stroke: '#1890ff' }
+            });
+          }
+        }
+
+        // 开始节点的特殊处理（仅在悬停开关启用时显示面板）
+        if (shape === 'LITEFLOW_START' && getGlobalHoverPanelEnabled()) {
           // 清除之前的计时器
           if (hoverTimerRef.current) {
             clearTimeout(hoverTimerRef.current);
@@ -1178,6 +1196,17 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
       flowGraph.on('node:mouseleave', (args: any) => {
         const { node } = args;
         const shape = node.shape;
+
+        // 悬停高亮功能
+        if (getGlobalHoverPanelEnabled() && node.id && !node.id.startsWith('content-panel') && !node.id.startsWith('interface-')) {
+          if (shape !== 'LITEFLOW_START') {
+            node.setAttrs({
+              body: { strokeWidth: 2, stroke: 'transparent' }
+            });
+          }
+        }
+
+        // 开始节点的特殊处理
         if (shape === 'LITEFLOW_START') {
           // 清除计时器
           if (hoverTimerRef.current) {
@@ -1194,6 +1223,15 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
       flowGraph.on('viewMode:changed', () => {
         // 直接使用闭包中的 flowGraph
         if (!flowGraph) return;
+
+        // 先移除旧的内容面板节点和连线，确保不影响边界计算
+        if (contentPanelNodeIdRef.current) {
+          const oldNode = flowGraph.getCellById(contentPanelNodeIdRef.current);
+          if (oldNode) oldNode.remove();
+          const oldEdges = flowGraph.getEdges().filter(edge => edge.id.startsWith('content-edge-'));
+          oldEdges.forEach(edge => edge.remove());
+          contentPanelNodeIdRef.current = null;
+        }
 
         const nodes = flowGraph.getNodes();
         const contents: Array<{
@@ -1244,14 +1282,6 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
             }
           }
         });
-
-        // 移除旧的内容面板节点和连线
-        if (contentPanelNodeIdRef.current) {
-          const oldNode = flowGraph.getCellById(contentPanelNodeIdRef.current);
-          if (oldNode) oldNode.remove();
-          const oldEdges = flowGraph.getEdges().filter(edge => edge.id.startsWith('content-edge-'));
-          oldEdges.forEach(edge => edge.remove());
-        }
 
         // 分离接口信息节点和其他节点
         const interfaceInfo = contents.find(c => c.id === 'interface-info');
@@ -1358,45 +1388,15 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
           });
           contentPanelNodeIdRef.current = panelId;
 
-          // 创建连线：从节点底部到面板顶部（接口信息节点不需要连线）
-          sortedContents.forEach((content, index) => {
-            // 接口信息节点没有对应的流程图节点，跳过连线
-            if (content.id === 'interface-info') return;
-
-            const targetNode = flowGraph.getCellById(content.id);
-            if (targetNode) {
-              const targetBbox = targetNode.getBBox();
-              const cardCol = index % cols;
-              const cardRow = Math.floor(index / cols);
-              // 卡片在面板内的位置
-              const cardX = panelX + 16 + cardCol * (200 + 12) + 200 / 2;
-              const cardY = panelY + 50 + cardRow * (maxNodeHeight + 12);
-
-              // 连线从节点底部到面板顶部
-              flowGraph.addEdge({
-                id: `content-edge-${content.id}`,
-                source: { x: targetBbox.center.x, y: targetBbox.y + targetBbox.height },
-                target: { x: cardX, y: cardY },
-                attrs: { line: { stroke: '#faad14', strokeWidth: 1.5, targetMarker: null } },
-                connector: 'straight',
-                zIndex: -1
+          // 调整画布视口，让面板和流程图都可见
+          setTimeout(() => {
+            if (flowGraph) {
+              flowGraph.zoomToFit({
+                minScale: 0.1,
+                maxScale: 0.8
               });
             }
-          });
-
-          // 调整画布视口，让面板和流程图都可见
-          // 只在首次创建面板时调整，后续切换不再调整以保持一致的缩放
-          if (!hasZoomedToFitRef.current) {
-            setTimeout(() => {
-              if (flowGraph) {
-                flowGraph.zoomToFit({
-                  minScale: 0.1,
-                  maxScale: 0.8
-                });
-                hasZoomedToFitRef.current = true;
-              }
-            }, 150);
-          }
+          }, 150);
         }
       });
       flowGraph.on('node:showParamsChanged', (args: any) => {
@@ -1427,8 +1427,9 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
         flowGraph.off('graph:hideContextMenu', hideHandler);
         flowGraph.off('graph:showContextPad', showContextPad);
         flowGraph.off('graph:hideContextPad', hideContextPad);
-        flowGraph.off('model:change', handleModelChange);
+        flowGraph.off('model:changed');
         flowGraph.off('panel:show', showPanel);
+        flowGraph.off('blank:click');
         flowGraph.off('viewMode:changed');
         flowGraph.off('node:showParamsChanged');
         flowGraph.off('node:showStepsChanged');
@@ -1437,7 +1438,7 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
         flowGraph.off('node:mouseleave');
       }
     };
-  }, [flowGraph, showPanel]);
+  }, [flowGraph, showPanel, hidePanel]);
 
   return (
     <ShowParamsProvider>
@@ -1484,11 +1485,13 @@ const LiteFlowEditorInner = forwardRef<React.FC, ILiteFlowEditorProps>(function 
 
 const LiteFlowEditor = forwardRef<React.FC, ILiteFlowEditorProps>(function (props, ref) {
   return (
-    <PanelProvider>
-      <InterfaceProvider>
-        <LiteFlowEditorInner {...props} ref={ref} />
-      </InterfaceProvider>
-    </PanelProvider>
+    <HoverPanelProvider>
+      <PanelProvider>
+        <InterfaceProvider>
+          <LiteFlowEditorInner {...props} ref={ref} />
+        </InterfaceProvider>
+      </PanelProvider>
+    </HoverPanelProvider>
   );
 });
 

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Graph } from '@antv/x6';
-import { Tag } from 'antd';
+import { Tag, Empty } from 'antd';
 import {
   OrderedListOutlined,
   SettingOutlined,
@@ -8,9 +8,10 @@ import {
   ApiOutlined,
   CloudServerOutlined
 } from '@ant-design/icons';
-import classNames from 'classnames';
 import { getGlobalViewMode, ViewMode } from '../../context/ViewModeContext';
 import styles from './index.module.less';
+
+const API_BASE_PATH = (window as any).LITEFLOW_CONFIG?.API_BASE_PATH || 'api';
 
 interface ContentPanelProps {
   graph: Graph | undefined;
@@ -141,7 +142,6 @@ const ContentPanel: React.FC<ContentPanelProps> = ({ graph }) => {
 
   // 取消高亮
   const handleMouseLeave = useCallback(() => {
-    setHoveredNodeId(null);
     if (graph && hoveredNodeId) {
       try {
         const node = graph.getCellById(hoveredNodeId);
@@ -157,10 +157,11 @@ const ContentPanel: React.FC<ContentPanelProps> = ({ graph }) => {
         // ignore
       }
     }
+    setHoveredNodeId(null);
   }, [graph, hoveredNodeId]);
 
   // 过滤出当前视图有内容的节点
-  const filteredContents = useMemo(() => {
+  const filteredContents = React.useMemo(() => {
     return nodeContents.filter(content => {
       switch (viewMode) {
         case 'summary':
@@ -324,8 +325,12 @@ const ContentPanel: React.FC<ContentPanelProps> = ({ graph }) => {
     }
   };
 
-  // 不渲染的情况
-  if (!graph || !isReady || !viewMode || filteredContents.length === 0) {
+  // 不渲染的情况（非上下文视图且无内容时）
+  if (!graph || !isReady || !viewMode) {
+    return null;
+  }
+
+  if (filteredContents.length === 0) {
     return null;
   }
 
@@ -340,9 +345,7 @@ const ContentPanel: React.FC<ContentPanelProps> = ({ graph }) => {
           {filteredContents.map((content, index) => (
             <div
               key={content.id}
-              className={classNames(styles.nodeContentCard, {
-                [styles.hovered]: hoveredNodeId === content.id
-              })}
+              className={styles.nodeContentCard}
               onMouseEnter={() => handleMouseEnter(content.id)}
               onMouseLeave={handleMouseLeave}
             >

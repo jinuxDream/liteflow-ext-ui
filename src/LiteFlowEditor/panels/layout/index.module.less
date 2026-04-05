@@ -3,6 +3,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 
   .liteflowEditorToolBar {
     height: 48px;
@@ -10,6 +11,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: #fafafa;
+    border-bottom: 1px solid #d9d9d9;
+    padding: 0 16px;
+    box-sizing: border-box;
   }
 
   .panelControlInToolbar {
@@ -23,12 +28,12 @@
     background: #f0f0f0;
     border: 1px solid #d9d9d9;
     transition: all 0.3s;
-    
+
     &:hover {
       background: #e6e6e6;
       border-color: #bfbfbf;
     }
-    
+
     .anticon {
       font-size: 14px;
       color: #595959;
@@ -41,190 +46,72 @@
     align-items: center;
   }
 
-  .liteflowEditorSideBar {
-    border-right: 1px solid #d9d9d9;
-    overflow: auto;
+  .mainContent {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
   }
 
-  .liteflowEditorSettingBar {
-    height: 100%;
-    border-left: 1px solid #d9d9d9;
+  .sideBarArea {
+    width: 260px;
+    flex-shrink: 0;
+    border-right: 1px solid #d9d9d9;
     overflow: auto;
+    background: #fff;
+  }
+
+  .canvasArea {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     position: relative;
   }
 
-  .fullscreen {
+  .panelArea {
+    width: 400px;
+    flex-shrink: 0;
+    border-left: 1px solid #d9d9d9;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: #fff;
+  }
+
+  .panelFullscreen {
     position: fixed;
-    top: 43px;
+    top: 48px;
     right: 0;
     bottom: 0;
     left: 0;
+    width: auto;
     z-index: 1000;
     border-left: none;
-    background: #fff;
-    padding: 0 30px 30px 30px;
+    border-top: 1px solid #d9d9d9;
+    padding: 16px 30px 24px 30px;
     box-sizing: border-box;
-    overflow-y: auto;
-    
-    .liteflowEditorPropertiesEditorContainer {
-      height: auto;
-      overflow: visible;
-      padding: 0;
-      font-size: 16px;
-      
-      .metadataContainer {
-        gap: 14px;
+
+    // 确保全屏模式下 Tabs 和内容高度正确
+    :global {
+      .ant-tabs {
+        height: 100% !important;
+        flex: 1;
+        min-height: 0;
       }
-      
-      .basicInfo {
-        padding: 10px 14px;
-        font-size: 15px;
+      .ant-tabs-content-holder {
+        flex: 1;
+        min-height: 0;
       }
-      
-      .infoLabel {
-        font-size: 15px;
+      .ant-tabs-content {
+        height: 100%;
       }
-      
-      .infoTag {
-        font-size: 14px;
-        padding: 0 5px;
-        height: 20px;
-        line-height: 18px;
-      }
-      
-      .infoNameTag {
-        font-size: 15px;
-        padding: 0 6px;
-        height: 22px;
-        line-height: 20px;
-      }
-      
-      .infoDesc {
-        font-size: 15px;
-      }
-      
-      .section {
-        padding: 10px 14px;
-        gap: 6px;
-      }
-      
-      .sectionHeader {
-        padding: 10px 14px;
-        margin-bottom: 8px;
-      }
-      
-      .sectionIcon {
-        font-size: 17px;
-      }
-      
-      .sectionTitle {
-        font-size: 15px;
-      }
-      
-      .sectionCount {
-        font-size: 14px;
-      }
-      
-      .paramGroup {
-        margin-bottom: 8px;
-        padding: 6px;
-      }
-      
-      .paramGroupHeader {
-        font-size: 14px;
-        padding: 6px 10px;
-        margin-bottom: 6px;
-      }
-      
-      .paramRow {
-        padding: 6px 10px;
-        gap: 6px;
-        font-size: 14px;
-      }
-      
-      .directionTag {
-        font-size: 12px;
-        padding: 0 4px;
-        height: 16px;
-        line-height: 14px;
-      }
-      
-      .paramName {
-        font-size: 14px;
-      }
-      
-      .typeTag {
-        font-size: 13px;
-        padding: 0 5px;
-        height: 18px;
-        line-height: 16px;
-      }
-      
-      .reqTag {
-        font-size: 13px;
-        padding: 0 5px;
-        height: 18px;
-        line-height: 16px;
-      }
-      
-      .paramDesc {
-        font-size: 14px;
-        line-height: 1.5;
-      }
-      
-      .accessRuleBox {
-        padding: 10px 14px;
-      }
-      
-      .accessRuleIcon {
-        font-size: 15px;
-      }
-      
-      .accessRuleText {
-        font-size: 15px;
-        line-height: 1.6;
-      }
-      
-      .stepCompactItem {
-        padding: 6px 10px;
-        gap: 8px;
-      }
-      
-      .stepNum {
-        font-size: 14px;
-        min-width: 20px;
-      }
-      
-      .stepText {
-        font-size: 14px;
-        line-height: 1.6;
-      }
-      
-      .depItem {
-        padding: 6px 10px;
-        gap: 8px;
-        min-height: 28px;
-      }
-      
-      .depType {
-        font-size: 13px;
-        padding: 0 5px;
-        height: 18px;
-        line-height: 16px;
-      }
-      
-      .depName {
-        font-size: 14px;
-      }
-      
-      .depDesc {
-        font-size: 14px;
-        line-height: 1.5;
+      .ant-tabs-tabpane {
+        height: 100%;
       }
     }
-    
+
     > * {
       max-width: 1200px;
       margin: 0 auto;
@@ -246,48 +133,15 @@
     border: 1px solid #d9d9d9;
     transition: all 0.3s;
     z-index: 10;
-    
-    &:hover {
-      background: #e6e6e6;
-      border-color: #bfbfbf;
-    }
-    
-    .anticon {
-      font-size: 14px;
-      color: #595959;
-    }
-  }
 
-  .panelShowButton {
-    width: 28px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border-radius: 4px 0 0 4px;
-    background: #f0f0f0;
-    border: 1px solid #d9d9d9;
-    border-right: none;
-    transition: all 0.3s;
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    
     &:hover {
       background: #e6e6e6;
       border-color: #bfbfbf;
     }
-    
+
     .anticon {
       font-size: 14px;
       color: #595959;
-    }
-  }
-  :global {
-    .x6-split-box-item-second {
-      z-index: 2 !important;
     }
   }
 }
